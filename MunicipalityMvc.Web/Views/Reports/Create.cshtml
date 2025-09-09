@@ -64,20 +64,49 @@
         const btn = document.getElementById('submitBtn');
         const spinner = document.getElementById('submitSpinner');
 
-        form.addEventListener('submit', function () {
-            // Show animated progress bar during submit
+        form.addEventListener('submit', function (e) {
+            // Show animated progress bar during a short staged delay and cycle encouragement messages
             progress.classList.remove('d-none');
             spinner.classList.remove('d-none');
             btn.setAttribute('disabled', 'disabled');
 
+            const messages = [
+                'Packing your report…',
+                'Adding your attachments…',
+                'Securing your submission…',
+                'Saving to the queue…',
+                'Almost there…'
+            ];
+            let idx = 0;
             let pct = 0;
-            const timer = setInterval(() => {
-                pct = Math.min(98, pct + 5);
-                bar.style.width = pct + '%';
-            }, 120);
 
-            // The navigation to the Success page will naturally stop the timer
-            window.addEventListener('beforeunload', () => clearInterval(timer));
+            const msgToast = window.showToast ? (m) => window.showToast(m, 'text-bg-primary') : null;
+            if (msgToast) msgToast(messages[idx]);
+
+            const msgTimer = setInterval(() => {
+                idx = (idx + 1) % messages.length;
+                if (msgToast) msgToast(messages[idx]);
+            }, 1000);
+
+            const progTimer = setInterval(() => {
+                pct = Math.min(98, pct + 4);
+                bar.style.width = pct + '%';
+            }, 100);
+
+            // Delay real submission slightly so users see progress/messages
+            e.preventDefault();
+            setTimeout(() => {
+                clearInterval(msgTimer);
+                clearInterval(progTimer);
+                bar.style.width = '100%';
+                form.submit();
+            }, 2500);
+
+            // If user navigates away early
+            window.addEventListener('beforeunload', () => {
+                clearInterval(msgTimer);
+                clearInterval(progTimer);
+            });
         });
     })();
 </script>
