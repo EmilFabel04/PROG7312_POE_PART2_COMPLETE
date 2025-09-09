@@ -20,6 +20,7 @@
             <tr>
                 <th>Ticket</th>
                 <th>Category</th>
+                <th>Location</th>
                 <th>Description</th>
             </tr>
         </thead>
@@ -33,6 +34,7 @@
                     <button type="button" class="btn btn-sm btn-link text-decoration-none copy-btn" data-copy="@(string.IsNullOrWhiteSpace(item.TicketCode) ? item.Id.ToString() : item.TicketCode)">Copy</button>
                 </td>
                 <td>@item.Category</td>
+                <td>@item.Location</td>
                 <td>@item.Description</td>
             </tr>
         }
