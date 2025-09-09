@@ -1,0 +1,15 @@
+@{
+    ViewData["Title"] = "Report Submitted";
+}
+
+<div class="container py-5">
+    <div class="alert alert-success">
+        <h4 class="alert-heading">Thank you!</h4>
+        <p>Your report has been submitted successfully.</p>
+        <hr />
+        <p class="mb-0">Reference ID: <strong>@ViewBag.ReportId</strong></p>
+    </div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Main Menu</a>
+</div>
+
+
