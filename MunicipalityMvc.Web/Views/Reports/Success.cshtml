@@ -81,11 +81,15 @@
             if (!sessionStorage.getItem(key)) {
                 if (window.showToast) {
                     const code = '@(string.IsNullOrWhiteSpace(Model.TicketCode) ? Model.Id.ToString() : Model.TicketCode)';
-                    window.showToast('Issue submitted successfully. Ticket: ' + code, 'text-bg-success');
+                    const name = '@(string.Join(" ", new[]{Model.FirstName, Model.LastName}.Where(s=>!string.IsNullOrWhiteSpace(s))))';
+                    const msg = (name && name.trim().length>0) ? `Thank you, ${name}. Ticket: ${code}` : `Issue submitted successfully. Ticket: ${code}`;
+                    window.showToast(msg, 'text-bg-success');
                 }
                 if ('Notification' in window && Notification.permission === 'granted') {
                     const code = '@(string.IsNullOrWhiteSpace(Model.TicketCode) ? Model.Id.ToString() : Model.TicketCode)';
-                    new Notification('Municipality', { body: 'Issue submitted. Ticket: ' + code });
+                    const name = '@(string.Join(" ", new[]{Model.FirstName, Model.LastName}.Where(s=>!string.IsNullOrWhiteSpace(s))))';
+                    const body = (name && name.trim().length>0) ? `Thanks, ${name}. Ticket: ${code}` : `Issue submitted. Ticket: ${code}`;
+                    new Notification('Municipality', { body });
                 }
                 sessionStorage.setItem(key, '1');
             }

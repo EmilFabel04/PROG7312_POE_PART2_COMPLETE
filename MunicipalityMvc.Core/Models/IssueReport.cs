@@ -18,6 +18,8 @@ public sealed class IssueReport
 	public string? LastName { get; set; }
 	public string? Email { get; set; }
 	public string? Phone { get; set; }
+	public bool WantsEmailUpdates { get; set; }
+	public bool WantsSmsUpdates { get; set; }
 	public string Location { get; set; } = string.Empty;
 	public IssueCategory Category { get; set; } = IssueCategory.Other;
 	public string Description { get; set; } = string.Empty;
