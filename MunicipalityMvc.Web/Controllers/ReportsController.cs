@@ -34,13 +34,24 @@ public sealed class ReportsController : Controller
 		var tempFiles = new List<string>();
 		if (attachments != null)
 		{
+			var uploadStaging = Path.Combine(Path.GetTempPath(), "MunicipalityMvcUploads");
+			Directory.CreateDirectory(uploadStaging);
 			foreach (var file in attachments)
 			{
 				if (file.Length <= 0) continue;
-				var tempPath = Path.GetTempFileName();
-				await using var stream = System.IO.File.OpenWrite(tempPath);
+				var originalName = Path.GetFileName(file.FileName);
+				var destPath = Path.Combine(uploadStaging, originalName);
+				// ensure unique name if duplicate
+				int suffix = 1;
+				var nameOnly = Path.GetFileNameWithoutExtension(originalName);
+				var ext = Path.GetExtension(originalName);
+				while (System.IO.File.Exists(destPath))
+				{
+					destPath = Path.Combine(uploadStaging, $"{nameOnly} ({suffix++}){ext}");
+				}
+				await using var stream = System.IO.File.OpenWrite(destPath);
 				await file.CopyToAsync(stream);
-				tempFiles.Add(tempPath);
+				tempFiles.Add(destPath);
 			}
 		}
 
