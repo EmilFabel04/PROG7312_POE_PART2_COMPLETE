@@ -142,3 +142,15 @@ Add screenshots of the following key areas to demonstrate implementation quality
 - Academic use for PROG7312 Part 1 submission.
 - Reference brief repository: `https://github.com/ST10359034/MunicipalServicesApp_PROG7312_POE`.
 
+## References
+- ASP.NET Core MVC docs: `https://learn.microsoft.com/aspnet/core/mvc/overview?view=aspnetcore-8.0`
+- ASP.NET Core file uploads: `https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads?view=aspnetcore-8.0`
+- Dependency Injection in ASP.NET Core: `https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-8.0`
+- System.Text.Json serialization: `https://learn.microsoft.com/dotnet/standard/serialization/system-text-json-overview`
+- .NET Queue<T> class: `https://learn.microsoft.com/dotnet/api/system.collections.generic.queue-1`
+- Bootstrap 5 documentation: `https://getbootstrap.com/docs/5.3/getting-started/introduction/`
+- Bootstrap Toasts: `https://getbootstrap.com/docs/5.3/components/toasts/`
+- MDN Web Docs – Notification API: `https://developer.mozilla.org/docs/Web/API/Notifications_API`
+- MDN Web Docs – HTML forms basics: `https://developer.mozilla.org/docs/Learn/Forms/Your_first_form`
+- W3Schools – HTML: `https://www.w3schools.com/html/`
+- W3Schools – Bootstrap 5: `https://www.w3schools.com/bootstrap5/`
