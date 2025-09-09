@@ -4,10 +4,18 @@
 }
 
 <div class="container py-4">
-    <h2 class="mb-3">All Submitted Reports</h2>
-    <p class="text-muted">Showing all items currently in the queue (oldest first).</p>
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="mb-1">All Submitted Reports</h2>
+            <p class="text-muted mb-0">Showing all items currently in the queue (oldest first).</p>
+        </div>
+        <div class="input-group" style="max-width: 320px;">
+            <span class="input-group-text">Search</span>
+            <input id="filter" type="text" class="form-control" placeholder="Ticket, location, category" />
+        </div>
+    </div>
 
-    <table class="table table-striped">
+    <table class="table table-striped align-middle" id="reportsTable">
         <thead>
             <tr>
                 <th>#</th>
@@ -24,7 +32,10 @@
             var item = Model[i];
             <tr>
                 <td>@(i + 1)</td>
-                <td>@(string.IsNullOrWhiteSpace(item.TicketCode) ? item.Id.ToString() : item.TicketCode)</td>
+                <td>
+                    <span class="badge text-bg-secondary">@(string.IsNullOrWhiteSpace(item.TicketCode) ? item.Id.ToString() : item.TicketCode)</span>
+                    <button type="button" class="btn btn-sm btn-link text-decoration-none copy-btn" data-copy="@(string.IsNullOrWhiteSpace(item.TicketCode) ? item.Id.ToString() : item.TicketCode)">Copy</button>
+                </td>
                 <td>@item.Location</td>
                 <td>@item.Category</td>
                 <td>@item.CreatedAt.ToLocalTime()</td>
@@ -38,5 +49,29 @@
 
     <a asp-controller="Home" asp-action="Index" class="btn btn-link">Back to Main Menu</a>
 </div>
+
+@section Scripts {
+    <script>
+        (function(){
+            const filter = document.getElementById('filter');
+            const rows = Array.from(document.querySelectorAll('#reportsTable tbody tr'));
+            filter.addEventListener('input', function(){
+                const q = this.value.toLowerCase();
+                rows.forEach(r => {
+                    const txt = r.innerText.toLowerCase();
+                    r.style.display = txt.includes(q) ? '' : 'none';
+                });
+            });
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    try {
+                        await navigator.clipboard.writeText(btn.getAttribute('data-copy'));
+                        if (window.showToast) window.showToast('Ticket copied to clipboard', 'text-bg-success');
+                    } catch {}
+                });
+            });
+        })();
+    </script>
+}
 
 
