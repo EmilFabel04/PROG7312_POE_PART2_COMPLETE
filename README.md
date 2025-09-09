@@ -95,6 +95,49 @@ The app will open at `http://localhost:xxxx`.
 - Browser notification blocked: the app still works; notifications are optional.
 - Access denied writing to `AppData/data`: run VS as user with folder permissions or choose a writeable workspace.
 
+## Code Highlights (add screenshots here)
+Add screenshots of the following key areas to demonstrate implementation quality and the queue-based design. Save images under `docs/` with the suggested filenames.
+
+- Queue data structure and JSON persistence (mandatory emphasis)
+  - File: `MunicipalityMvc.Core/Services/IssueService.cs`
+  - Highlights: private `Queue<IssueReport> _queue`, constructor loading queue from JSON, `AddAsync` enqueuing and persisting, `GetPositionAsync`, `PersistQueue()`
+  - Screenshot: `docs/code_queue_issue_service.png`
+
+- Domain model with contact details and preferences
+  - File: `MunicipalityMvc.Core/Models/IssueReport.cs`
+  - Highlights: `TicketCode`, `FirstName`, `LastName`, `Email`, `Phone`, `WantsEmailUpdates`, `WantsSmsUpdates`, `AttachmentPaths`
+  - Screenshot: `docs/code_issue_report_model.png`
+
+- Dependency Injection setup
+  - File: `MunicipalityMvc.Web/Program.cs`
+  - Highlights: registering `IIssueService` with base data folder, building and running app
+  - Screenshot: `docs/code_di_program.png`
+
+- Ticket submission and file staging
+  - File: `MunicipalityMvc.Web/Controllers/ReportsController.cs` (Create POST)
+  - Highlights: accepting contact + preferences, staging uploads with original filenames, constructing `IssueReport`, calling `AddAsync`
+  - Screenshot: `docs/code_reports_controller_create.png`
+
+- User engagement during submission (progress + messages)
+  - File: `MunicipalityMvc.Web/Views/Reports/Create.cshtml`
+  - Highlights: animated progress bar, rotating toasts with staged delay
+  - Screenshot: `docs/code_create_progress.png`
+
+- Success page feedback and privacy
+  - File: `MunicipalityMvc.Web/Views/Reports/Success.cshtml`
+  - Highlights: one-time toast/notification, queue position, ticket details
+  - Screenshot: `docs/code_success_toast.png`
+
+- Public reports list with privacy adjustments
+  - File: `MunicipalityMvc.Web/Views/Reports/Index.cshtml`
+  - Highlights: shows Ticket, Category, Location, Description only; copy-to-clipboard; search
+  - Screenshot: `docs/code_reports_index_privacy.png`
+
+### Screenshot tips
+- Use VS2022 with a dark or light theme; zoom ~120% for readability.
+- Crop to the specific methods/blocks listed above, including file name in the editor tab if possible.
+- Keep each image under ~1MB for repository size.
+
 ## License & Acknowledgements
 - Academic use for PROG7312 Part 1 submission.
 - Reference brief repository: `https://github.com/ST10359034/MunicipalServicesApp_PROG7312_POE`.
