@@ -38,6 +38,8 @@ public sealed class IssueService : IIssueService
 
 	public async Task<IssueReport> AddAsync(IssueReport report, IEnumerable<string> attachmentSourcePaths, CancellationToken cancellationToken = default)
 	{
+		// Generate a short human-friendly ticket code (e.g., MS-ABC123)
+		report.TicketCode = GenerateTicketCode();
 		var attachmentsFolder = Path.Combine(_dataDirectory, report.Id.ToString());
 		Directory.CreateDirectory(attachmentsFolder);
 		foreach (var src in attachmentSourcePaths)
@@ -55,6 +57,15 @@ public sealed class IssueService : IIssueService
 		}
 
 		return await Task.FromResult(report);
+	}
+
+	private static string GenerateTicketCode()
+	{
+		const string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // avoid similar-looking chars
+		var rnd = Random.Shared;
+		Span<char> buffer = stackalloc char[6];
+		for (var i = 0; i < buffer.Length; i++) buffer[i] = alphabet[rnd.Next(alphabet.Length)];
+		return $"MS-{new string(buffer)}";
 	}
 
 	public Task<IssueReport?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)

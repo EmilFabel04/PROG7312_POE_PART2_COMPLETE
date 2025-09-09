@@ -26,8 +26,8 @@
         <div class="card-header">Ticket Details</div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Reference ID</dt>
-                <dd class="col-sm-9">@Model.Id</dd>
+                <dt class="col-sm-3">Ticket</dt>
+                <dd class="col-sm-9"><strong>@(string.IsNullOrWhiteSpace(Model.TicketCode) ? Model.Id.ToString() : Model.TicketCode)</strong></dd>
                 @if (ViewBag.Position != null)
                 {
                     <dt class="col-sm-3">Queue Position</dt>
@@ -66,16 +66,21 @@
 
 @section Scripts {
     <script>
-        // Show success toast and a browser notification as multi-channel feedback
-        if (window.showToast) {
-            window.showToast('Issue submitted successfully. Reference: ' + '@Model.Id', 'text-bg-success');
-        }
-
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Municipality', {
-                body: 'Issue submitted. Ref: ' + '@Model.Id'
-            });
-        }
+        // Show success toast once (on initial redirect only). If user refreshes or revisits, don’t repeat.
+        (function(){
+            const key = 'shownToast_@Model.Id';
+            if (!sessionStorage.getItem(key)) {
+                if (window.showToast) {
+                    const code = '@(string.IsNullOrWhiteSpace(Model.TicketCode) ? Model.Id.ToString() : Model.TicketCode)';
+                    window.showToast('Issue submitted successfully. Ticket: ' + code, 'text-bg-success');
+                }
+                if ('Notification' in window && Notification.permission === 'granted') {
+                    const code = '@(string.IsNullOrWhiteSpace(Model.TicketCode) ? Model.Id.ToString() : Model.TicketCode)';
+                    new Notification('Municipality', { body: 'Issue submitted. Ticket: ' + code });
+                }
+                sessionStorage.setItem(key, '1');
+            }
+        })();
     </script>
 }
 

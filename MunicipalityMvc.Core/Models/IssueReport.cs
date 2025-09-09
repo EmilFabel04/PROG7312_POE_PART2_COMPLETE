@@ -13,6 +13,7 @@ public enum IssueCategory
 public sealed class IssueReport
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
+	public string TicketCode { get; set; } = string.Empty;
 	public string Location { get; set; } = string.Empty;
 	public IssueCategory Category { get; set; } = IssueCategory.Other;
 	public string Description { get; set; } = string.Empty;

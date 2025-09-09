@@ -11,7 +11,7 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Reference</th>
+                <th>Ticket</th>
                 <th>Location</th>
                 <th>Category</th>
                 <th>Created</th>
@@ -24,7 +24,7 @@
             var item = Model[i];
             <tr>
                 <td>@(i + 1)</td>
-                <td>@item.Id</td>
+                <td>@(string.IsNullOrWhiteSpace(item.TicketCode) ? item.Id.ToString() : item.TicketCode)</td>
                 <td>@item.Location</td>
                 <td>@item.Category</td>
                 <td>@item.CreatedAt.ToLocalTime()</td>
