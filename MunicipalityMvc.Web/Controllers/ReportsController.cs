@@ -22,7 +22,7 @@ public sealed class ReportsController : Controller
 
 	[HttpPost]
 	[ValidateAntiForgeryToken]
-	public async Task<IActionResult> Create(string location, IssueCategory category, string description, List<IFormFile>? attachments)
+	public async Task<IActionResult> Create(string? firstName, string? lastName, string? email, string? phone, string location, IssueCategory category, string description, List<IFormFile>? attachments)
 	{
 		if (string.IsNullOrWhiteSpace(location) || string.IsNullOrWhiteSpace(description))
 		{
@@ -57,6 +57,10 @@ public sealed class ReportsController : Controller
 
 		var report = new IssueReport
 		{
+			FirstName = string.IsNullOrWhiteSpace(firstName) ? null : firstName.Trim(),
+			LastName = string.IsNullOrWhiteSpace(lastName) ? null : lastName.Trim(),
+			Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim(),
+			Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim(),
 			Location = location.Trim(),
 			Category = category,
 			Description = description.Trim()

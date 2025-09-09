@@ -41,6 +41,15 @@
                 <dd class="col-sm-9 white-space-pre-line">@Model.Description</dd>
                 <dt class="col-sm-3">Created</dt>
                 <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime()</dd>
+                @if (!string.IsNullOrWhiteSpace(Model.FirstName) || !string.IsNullOrWhiteSpace(Model.LastName) || !string.IsNullOrWhiteSpace(Model.Email) || !string.IsNullOrWhiteSpace(Model.Phone))
+                {
+                    <dt class="col-sm-3">Contact</dt>
+                    <dd class="col-sm-9">
+                        <div>@(string.Join(" ", new[]{Model.FirstName, Model.LastName}.Where(s=>!string.IsNullOrWhiteSpace(s))))</div>
+                        @if (!string.IsNullOrWhiteSpace(Model.Email)) {<div>Email: @Model.Email</div>}
+                        @if (!string.IsNullOrWhiteSpace(Model.Phone)) {<div>Phone: @Model.Phone</div>}
+                    </dd>
+                }
                 <dt class="col-sm-3">Attachments</dt>
                 <dd class="col-sm-9">
                     @if (Model.AttachmentPaths?.Count > 0)

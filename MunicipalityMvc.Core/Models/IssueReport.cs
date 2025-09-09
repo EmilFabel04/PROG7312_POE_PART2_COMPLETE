@@ -14,6 +14,10 @@ public sealed class IssueReport
 {
 	public Guid Id { get; set; } = Guid.NewGuid();
 	public string TicketCode { get; set; } = string.Empty;
+	public string? FirstName { get; set; }
+	public string? LastName { get; set; }
+	public string? Email { get; set; }
+	public string? Phone { get; set; }
 	public string Location { get; set; } = string.Empty;
 	public IssueCategory Category { get; set; } = IssueCategory.Other;
 	public string Description { get; set; } = string.Empty;
