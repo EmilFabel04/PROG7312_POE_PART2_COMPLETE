@@ -37,6 +37,18 @@
         </main>
     </div>
 
+    <!-- Toast container -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+        <div id="appToast" class="toast align-items-center text-bg-primary border-0 d-none" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="appToastBody">
+                    Action completed.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - MunicipalityMvc.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -45,6 +57,23 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Expose a helper to show toast messages anywhere
+        window.showToast = function(message, colorClass) {
+            const toastEl = document.getElementById('appToast');
+            const bodyEl = document.getElementById('appToastBody');
+            bodyEl.textContent = message || 'Action completed.';
+            toastEl.classList.remove('d-none', 'text-bg-primary', 'text-bg-success', 'text-bg-warning');
+            toastEl.classList.add(colorClass || 'text-bg-success');
+            const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+            toast.show();
+        }
+
+        // Optional: request Notification permission proactively
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

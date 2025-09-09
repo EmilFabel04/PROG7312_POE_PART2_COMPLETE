@@ -9,6 +9,19 @@
         <p>Your report has been submitted successfully.</p>
     </div>
 
+    <div class="mb-4">
+        <h5>What happens next</h5>
+        <ol class="list-group list-group-numbered">
+            <li class="list-group-item">Submitted — We have received your ticket.</li>
+            <li class="list-group-item">Triaged — The team will verify and prioritise the issue.</li>
+            <li class="list-group-item">Assigned — The issue will be assigned to a field team.</li>
+        </ol>
+        @if (ViewBag.Position != null)
+        {
+            <div class="alert alert-info mt-3">Current queue position: <strong>@ViewBag.Position</strong></div>
+        }
+    </div>
+
     <div class="card mb-3">
         <div class="card-header">Ticket Details</div>
         <div class="card-body">
@@ -51,4 +64,18 @@
     <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Main Menu</a>
 </div>
 
+@section Scripts {
+    <script>
+        // Show success toast and a browser notification as multi-channel feedback
+        if (window.showToast) {
+            window.showToast('Issue submitted successfully. Reference: ' + '@Model.Id', 'text-bg-success');
+        }
+
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('Municipality', {
+                body: 'Issue submitted. Ref: ' + '@Model.Id'
+            });
+        }
+    </script>
+}
 
