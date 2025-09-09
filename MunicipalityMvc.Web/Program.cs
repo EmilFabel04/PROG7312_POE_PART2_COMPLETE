@@ -3,10 +3,10 @@ using MunicipalityMvc.Core.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container (MVC controllers + views)
 builder.Services.AddControllersWithViews();
 
-// Configure app data directory and services
+// Configure app data directory and register the queue-backed issue service
 var appData = Path.Combine(builder.Environment.ContentRootPath, "AppData");
 builder.Services.AddSingleton<IIssueService>(_ => new IssueService(appData));
 

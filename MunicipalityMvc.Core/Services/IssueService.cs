@@ -4,6 +4,7 @@ using MunicipalityMvc.Core.Models;
 
 namespace MunicipalityMvc.Core.Services;
 
+// Stores issue reports using a FIFO queue and persists them to a JSON file.
 public sealed class IssueService : IIssueService
 {
 	private readonly string _dataDirectory;
@@ -12,6 +13,7 @@ public sealed class IssueService : IIssueService
 	private readonly object _sync = new();
 	private readonly Queue<IssueReport> _queue = new();
 
+	// Create the service, prepare the data folder, and load any previously saved issues.
 	public IssueService(string baseDataDirectory)
 	{
 		_dataDirectory = Path.Combine(baseDataDirectory, "data");
@@ -28,6 +30,7 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
+	// Return a snapshot of the current queue as a read-only list.
 	public Task<IReadOnlyList<IssueReport>> GetAllAsync(CancellationToken cancellationToken = default)
 	{
 		lock (_sync)
@@ -36,6 +39,7 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
+	// Enqueue a new report, copy attachments, then persist the full queue to disk.
 	public async Task<IssueReport> AddAsync(IssueReport report, IEnumerable<string> attachmentSourcePaths, CancellationToken cancellationToken = default)
 	{
 		// Generate a short human-friendly ticket code (e.g., MS-ABC123)
@@ -59,6 +63,7 @@ public sealed class IssueService : IIssueService
 		return await Task.FromResult(report);
 	}
 
+	// Generate a short human-friendly ticket code (e.g., MS-ABC123).
 	private static string GenerateTicketCode()
 	{
 		const string alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // avoid similar-looking chars
@@ -68,6 +73,7 @@ public sealed class IssueService : IIssueService
 		return $"MS-{new string(buffer)}";
 	}
 
+	// Look up a report by its unique Id.
 	public Task<IssueReport?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		lock (_sync)
@@ -76,6 +82,7 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
+	// Compute a 1-based position for a report in the queue.
 	public Task<int?> GetPositionAsync(Guid id, CancellationToken cancellationToken = default)
 	{
 		lock (_sync)
@@ -86,6 +93,7 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
+	// Save the entire queue to the JSON file (simple and robust for this scope).
 	private void PersistQueue()
 	{
 		using var stream = File.Create(_dbFilePath);

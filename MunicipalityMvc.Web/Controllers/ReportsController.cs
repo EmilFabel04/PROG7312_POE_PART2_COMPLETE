@@ -4,6 +4,7 @@ using MunicipalityMvc.Core.Services;
 
 namespace MunicipalityMvc.Web.Controllers;
 
+// Handles the Report Issues flow: create tickets, show success, and list reports.
 public sealed class ReportsController : Controller
 {
 	private readonly IIssueService _issueService;
@@ -13,6 +14,7 @@ public sealed class ReportsController : Controller
 		_issueService = issueService;
 	}
 
+	// Show the form to report an issue
 	[HttpGet]
 	public IActionResult Create()
 	{
@@ -20,6 +22,7 @@ public sealed class ReportsController : Controller
 		return View();
 	}
 
+	// Accept a new report submission
 	[HttpPost]
 	[ValidateAntiForgeryToken]
 	public async Task<IActionResult> Create(string? firstName, string? lastName, string? email, string? phone, bool wantsEmailUpdates, bool wantsSmsUpdates, string location, IssueCategory category, string description, List<IFormFile>? attachments)
@@ -74,6 +77,7 @@ public sealed class ReportsController : Controller
 		return RedirectToAction(nameof(Success), new { id = report.Id });
 	}
 
+	// Show success and queue position for a specific report
 	[HttpGet]
 	public async Task<IActionResult> Success(Guid id)
 	{
@@ -83,6 +87,7 @@ public sealed class ReportsController : Controller
 		return View(report);
 	}
 
+	// Public list of reports (privacy-friendly summary)
 	[HttpGet]
 	public async Task<IActionResult> Index()
 	{
