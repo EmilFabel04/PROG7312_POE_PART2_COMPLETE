@@ -1,0 +1,42 @@
+@model IReadOnlyList<MunicipalityMvc.Core.Models.IssueReport>
+@{
+    ViewData["Title"] = "All Reports";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">All Submitted Reports</h2>
+    <p class="text-muted">Showing all items currently in the queue (oldest first).</p>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Reference</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Created</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+            <tr>
+                <td>@(i + 1)</td>
+                <td>@item.Id</td>
+                <td>@item.Location</td>
+                <td>@item.Category</td>
+                <td>@item.CreatedAt.ToLocalTime()</td>
+                <td>
+                    <a asp-action="Success" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">View</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    <a asp-controller="Home" asp-action="Index" class="btn btn-link">Back to Main Menu</a>
+</div>
+
+

@@ -58,10 +58,19 @@ public sealed class ReportsController : Controller
 	}
 
 	[HttpGet]
-	public IActionResult Success(Guid id)
+	public async Task<IActionResult> Success(Guid id)
 	{
-		ViewBag.ReportId = id;
-		return View();
+		var report = await _issueService.GetByIdAsync(id);
+		if (report is null) return RedirectToAction("Index", "Home");
+		ViewBag.Position = await _issueService.GetPositionAsync(id);
+		return View(report);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> Index()
+	{
+		var items = await _issueService.GetAllAsync();
+		return View(items);
 	}
 }
 

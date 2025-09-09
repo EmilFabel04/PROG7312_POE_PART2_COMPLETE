@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Linq;
 using MunicipalityMvc.Core.Models;
 
 namespace MunicipalityMvc.Core.Services;
@@ -8,6 +9,8 @@ public sealed class IssueService : IIssueService
 	private readonly string _dataDirectory;
 	private readonly string _dbFilePath;
 	private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+	private readonly object _sync = new();
+	private readonly Queue<IssueReport> _queue = new();
 
 	public IssueService(string baseDataDirectory)
 	{
@@ -15,12 +18,22 @@ public sealed class IssueService : IIssueService
 		Directory.CreateDirectory(_dataDirectory);
 		_dbFilePath = Path.Combine(_dataDirectory, "issues.json");
 		if (!File.Exists(_dbFilePath)) File.WriteAllText(_dbFilePath, "[]");
+
+		// Load persisted items into the in-memory queue preserving order
+		using var readStream = File.OpenRead(_dbFilePath);
+		var existing = JsonSerializer.Deserialize<List<IssueReport>>(readStream, _jsonOptions) ?? new();
+		foreach (var item in existing)
+		{
+			_queue.Enqueue(item);
+		}
 	}
 
-	public async Task<IReadOnlyList<IssueReport>> GetAllAsync(CancellationToken cancellationToken = default)
+	public Task<IReadOnlyList<IssueReport>> GetAllAsync(CancellationToken cancellationToken = default)
 	{
-		await using var stream = File.OpenRead(_dbFilePath);
-		return await JsonSerializer.DeserializeAsync<List<IssueReport>>(stream, _jsonOptions, cancellationToken) ?? new();
+		lock (_sync)
+		{
+			return Task.FromResult((IReadOnlyList<IssueReport>)_queue.ToList());
+		}
 	}
 
 	public async Task<IssueReport> AddAsync(IssueReport report, IEnumerable<string> attachmentSourcePaths, CancellationToken cancellationToken = default)
@@ -35,11 +48,37 @@ public sealed class IssueService : IIssueService
 			report.AttachmentPaths.Add(dest);
 		}
 
-		var items = (await GetAllAsync(cancellationToken)).ToList();
-		items.Add(report);
-		await using var stream = File.Create(_dbFilePath);
-		await JsonSerializer.SerializeAsync(stream, items, _jsonOptions, cancellationToken);
-		return report;
+		lock (_sync)
+		{
+			_queue.Enqueue(report);
+			PersistQueue();
+		}
+
+		return await Task.FromResult(report);
+	}
+
+	public Task<IssueReport?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		lock (_sync)
+		{
+			return Task.FromResult(_queue.FirstOrDefault(x => x.Id == id));
+		}
+	}
+
+	public Task<int?> GetPositionAsync(Guid id, CancellationToken cancellationToken = default)
+	{
+		lock (_sync)
+		{
+			var list = _queue.ToList();
+			var idx = list.FindIndex(x => x.Id == id);
+			return Task.FromResult(idx >= 0 ? (int?)(idx + 1) : null);
+		}
+	}
+
+	private void PersistQueue()
+	{
+		using var stream = File.Create(_dbFilePath);
+		JsonSerializer.Serialize(stream, _queue.ToList(), _jsonOptions);
 	}
 }
 

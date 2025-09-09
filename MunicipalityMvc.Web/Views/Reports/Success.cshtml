@@ -1,3 +1,4 @@
+@model MunicipalityMvc.Core.Models.IssueReport
 @{
     ViewData["Title"] = "Report Submitted";
 }
@@ -6,9 +7,47 @@
     <div class="alert alert-success">
         <h4 class="alert-heading">Thank you!</h4>
         <p>Your report has been submitted successfully.</p>
-        <hr />
-        <p class="mb-0">Reference ID: <strong>@ViewBag.ReportId</strong></p>
     </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Ticket Details</div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Reference ID</dt>
+                <dd class="col-sm-9">@Model.Id</dd>
+                @if (ViewBag.Position != null)
+                {
+                    <dt class="col-sm-3">Queue Position</dt>
+                    <dd class="col-sm-9">@ViewBag.Position</dd>
+                }
+                <dt class="col-sm-3">Location</dt>
+                <dd class="col-sm-9">@Model.Location</dd>
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9">@Model.Category</dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9 white-space-pre-line">@Model.Description</dd>
+                <dt class="col-sm-3">Created</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToLocalTime()</dd>
+                <dt class="col-sm-3">Attachments</dt>
+                <dd class="col-sm-9">
+                    @if (Model.AttachmentPaths?.Count > 0)
+                    {
+                        <ul>
+                            @foreach (var p in Model.AttachmentPaths)
+                            {
+                                <li>@System.IO.Path.GetFileName(p)</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>None</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
     <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Main Menu</a>
 </div>
 
