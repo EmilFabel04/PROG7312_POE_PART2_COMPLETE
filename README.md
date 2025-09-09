@@ -75,14 +75,52 @@ The app will open at `http://localhost:xxxx`.
 6. Success shows your Ticket code, queue position, details, attachments, and a one‑time toast/notification.
 7. Home → “View All Reports” lists tickets (ticket/category/description only).
 
+## Feature Walkthrough (with screenshots)
+Below are the key features, each paired with a screenshot placeholder you can replace.
+
+1) Main Menu (Home)
+- What you see: Friendly hero, primary CTA to “Report an Issue”, cards for key actions.
+- Why it matters: Meets brief by showing three tasks and enabling only Report Issues initially.
+- Screenshot: `docs/01_home.png`
+
+2) Report Issue (Create)
+- Fields: Name + Surname (optional), Email + Phone (optional), Allow Email Updates, Allow SMS Updates, Location, Category, Description, Attachments (multi‑upload).
+- UX: Clean card layout; validation; submission button shows spinner; animated progress bar runs with encouraging messages.
+- Screenshot: `docs/02_report_create.png`
+
+3) Proactive Feedback During Submit
+- What happens: As soon as Submit is clicked, we show an animated progress bar and cycle helpful toasts (e.g., “Packing your report…”, “Saving to the queue…”). This both informs and motivates.
+- Implementation: Lightweight front‑end timer, followed by a real submit; no server delay required.
+- Screenshot: `docs/02a_submit_progress.png`
+
+4) Success Page
+- Shows: Ticket code (short, friendly), queue position, full details, attachment filenames.
+- Feedback: One‑time toast (and browser notification if permitted) personalized with the submitter’s name.
+- Privacy: Only the owner sees contact details here; the public list hides contact info.
+- Screenshot: `docs/03_report_success.png`
+
+5) Public Reports List
+- Shows: Ticket, Category, Location, and Description only.
+- Extras: Copy ticket to clipboard; client‑side search box.
+- Screenshot: `docs/04_reports_list.png`
+
 ## Data Handling & Persistence
 - Queue storage: `IssueService` keeps an in-memory `Queue<IssueReport>` and persists the full queue to `issues.json`.
 - Attachments: copied into `AppData/data/<ticket-id>/` using original filenames; file list saved with the ticket.
+- Contact info & preferences: Optional `FirstName`, `LastName`, `Email`, `Phone`, plus `WantsEmailUpdates` and `WantsSmsUpdates` are stored per ticket for future parts (e.g., sending updates).
 - No database server required; runs offline.
+
+### Data Flow (end-to-end)
+1) `ReportsController.Create (POST)` receives form fields and attachments.
+2) Files are staged with original names and passed to `IssueService.AddAsync`.
+3) `IssueService` copies files into the ticket folder, enqueues the report, and re‑writes `issues.json`.
+4) The browser is redirected to Success, which reads the ticket and computes queue position.
+5) The public list reads the whole queue as a summary.
 
 ## Engagement & Accessibility
 - Submission feedback: progress bar + encouraging toasts while preparing the ticket.
-- Success feedback: one-time toast and optional browser notification (permission‑based).
+- Email/SMS update switches: Users can opt into updates (stored with the ticket). These preferences are persisted for later phases.
+- Success feedback: one-time toast and optional browser notification (permission‑based) personalized with the submitter’s name.
 - Keyboard navigation and labels for inputs; responsive design.
 
 ## Privacy & Security Notes
