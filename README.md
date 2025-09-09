@@ -22,7 +22,7 @@ Residents can submit issues with location, category, description, and multiple a
 ### Key Screens
 Home (Main menu)
 
-![Home – Main Menu](docs/01_home.png)
+![Home – Main Menu](01_home.png)
 
 Report Issue (Create)
 
