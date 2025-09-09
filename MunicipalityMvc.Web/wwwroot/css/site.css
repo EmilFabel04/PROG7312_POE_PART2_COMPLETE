@@ -33,6 +33,22 @@ body {
   white-space: pre-line;
 }
 
+/* Softer background for hero */
+.bg-light {
+  background: linear-gradient(180deg, #f8fafc, #f2f6fb);
+}
+
+/* Navbar primary tweak */
+.navbar.bg-primary {
+  background: linear-gradient(90deg, #0d6efd, #4c8dff);
+}
+
+/* Card hover effect */
+.card.shadow-sm:hover {
+  transform: translateY(-2px);
+  transition: transform .15s ease-in-out;
+}
+
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;

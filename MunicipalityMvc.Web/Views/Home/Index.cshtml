@@ -3,21 +3,41 @@
 }
 
 <div class="container py-5">
-    <h1 class="mb-4">Citizen Engagement Portal</h1>
-    <p class="lead">Choose a task below. Only "Report Issues" is enabled for Part 1.</p>
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+        <div class="container-fluid py-2">
+            <h1 class="display-6 fw-semibold">Citizen Engagement Portal</h1>
+            <p class="col-md-8 fs-5">Report municipal issues quickly, track progress, and help us improve your community.</p>
+            <a class="btn btn-primary btn-lg" asp-controller="Reports" asp-action="Create">Report an Issue</a>
+        </div>
+    </div>
 
-    <div class="row g-3 mt-3">
+    <div class="row g-4">
         <div class="col-12 col-md-6 col-lg-4">
-            <a class="btn btn-primary w-100 py-3" asp-controller="Reports" asp-action="Create">Report Issues</a>
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Report Issues</h5>
+                    <p class="card-text flex-grow-1">Log sanitation, roads, utilities, parks, and safety issues.</p>
+                    <a class="btn btn-outline-primary mt-2" asp-controller="Reports" asp-action="Create">Open</a>
+                </div>
+            </div>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
-            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Reports" asp-action="Index">View All Reports</a>
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">View All Reports</h5>
+                    <p class="card-text flex-grow-1">See the queue and check your ticket position.</p>
+                    <a class="btn btn-outline-primary mt-2" asp-controller="Reports" asp-action="Index">Open</a>
+                </div>
+            </div>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
-            <button class="btn btn-outline-secondary w-100 py-3" disabled>Local Events &amp; Announcements (Later)</button>
-        </div>
-        <div class="col-12 col-md-6 col-lg-4">
-            <button class="btn btn-outline-secondary w-100 py-3" disabled>Service Request Status (Later)</button>
+            <div class="card h-100 border-0">
+                <div class="card-body text-muted">
+                    <h5 class="card-title">Coming Soon</h5>
+                    <p class="card-text">Local Events &amp; Announcements</p>
+                    <p class="card-text">Service Request Status</p>
+                </div>
+            </div>
         </div>
     </div>
 
