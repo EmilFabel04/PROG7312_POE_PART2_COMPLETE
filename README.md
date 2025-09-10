@@ -1,6 +1,6 @@
 # Municipal Services — Citizen Engagement (ASP.NET Core MVC, .NET 8)
 
-This project implements Part 1 of the brief as a modern web app. It enables residents to report municipal issues with attachments and engagement features, using a queue data structure for storage and transparency.
+This is my Part 1 implementation as a modern web app. I focused on a simple, reliable experience where residents can report issues with attachments, get immediate progress feedback, and see transparent queue handling (FIFO) with JSON persistence.
 
 Screenshots are referenced below — add your images to `docs/` with the listed filenames.
 
