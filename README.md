@@ -177,7 +177,7 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - Long path names / file copy errors
   - Extract the ZIP to a short folder name; keep project depth minimal
 
-## Code Highlights (add screenshots here)
+## Code Highlights 
 Add screenshots of the following key areas to demonstrate the queue‑based design. Use the filenames shown (at repo root or under `docs/` if you prefer a folder). Filenames are case‑sensitive on GitHub.
 
 - Queue data structure and JSON persistence (mandatory emphasis)
