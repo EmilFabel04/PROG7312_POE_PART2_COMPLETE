@@ -64,18 +64,35 @@ All Reports (Public list)
 
 ## How To Run
 ### Visual Studio 2022
-1. Install VS2022 17.8+ with .NET 8 SDK and “ASP.NET and web development”.
-2. Open `MunicipalityMVC.sln`.
-3. Set startup project to `MunicipalityMvc.Web`.
-4. Press F5.
+1. Prerequisites
+   - Visual Studio 2022 17.8 or later
+   - Workload: “ASP.NET and web development” (includes .NET 8 SDK)
+2. Unzip & open
+   - Download the ZIP of this repository
+   - Extract to a short path (e.g., `C:\Projects\MunicipalityMVC`) to avoid long path issues
+   - Double‑click `MunicipalityMVC.sln` to open the solution in Visual Studio
+3. Restore & select startup
+   - VS will restore automatically (no third‑party packages are used)
+   - In Solution Explorer, right‑click `MunicipalityMvc.Web` → Set as Startup Project
+4. Run / debug
+   - Press F5 (Debug) or Ctrl+F5 (Run without debugging)
+   - Your browser will open to `https://localhost:<port>` (Kestrel or IIS Express)
+5. Try the flow
+   - Home → Report an Issue → Fill the form → Submit → Success (note ticket code and queue position)
+   - Home → View All Reports → See public list (Ticket, Category, Location, Description)
 
 ### .NET CLI
 ```
 dotnet build MunicipalityMVC.sln -c Release
 dotnet run --project MunicipalityMvc.Web
 ```
+The app will open at `http://localhost:<port>`.
 
-The app will open at `http://localhost:xxxx`.
+### Running from a ZIP (quick checklist)
+1) Extract the ZIP to a short path (avoid long OneDrive paths)
+2) Open `MunicipalityMVC.sln` in VS2022
+3) Set startup project to `MunicipalityMvc.Web`
+4) Build, then F5
 
 ## Usage Guide
 1. Home → click “Report an Issue”.
@@ -147,76 +164,99 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - Files are stored locally; no external uploads.
 
 ## Troubleshooting
-- “Can’t find .NET 8”: install .NET 8 SDK and ensure VS2022 17.8+.
-- Browser notification blocked: the app still works; notifications are optional.
-- Access denied writing to `AppData/data`: run VS as user with folder permissions or choose a writeable workspace.
+- .NET 8 SDK / VS version issues
+  - Install .NET 8 SDK and VS2022 17.8+; close and reopen the solution
+- HTTPS developer certificate prompt
+  - When VS asks to trust the developer certificate, click Yes; or browse with `http://localhost:<port>` if you prefer
+- Access denied writing to `MunicipalityMvc.Web/AppData/data`
+  - Move the solution to a writeable folder (e.g., `C:\Projects\MunicipalityMVC`) and avoid controlled/roaming paths
+- Port conflicts or stale debug sessions
+  - Stop all instances, close browsers, then run again; confirm the port in the address bar
+- Browser notifications not showing
+  - They are optional; the app still shows in‑app toasts if you deny permission
+- Long path names / file copy errors
+  - Extract the ZIP to a short folder name; keep project depth minimal
 
 ## Code Highlights (add screenshots here)
-Add screenshots of the following key areas to demonstrate implementation quality and the queue-based design. Save images under `docs/` with the suggested filenames.
+Add screenshots of the following key areas to demonstrate the queue‑based design. Use the filenames shown (at repo root or under `docs/` if you prefer a folder). Filenames are case‑sensitive on GitHub.
 
 - Queue data structure and JSON persistence (mandatory emphasis)
   - File: `MunicipalityMvc.Core/Services/IssueService.cs`
   - Highlights: private `Queue<IssueReport> _queue`, constructor loading queue from JSON, `AddAsync` enqueuing and persisting, `GetPositionAsync`, `PersistQueue()`
-  - Screenshot:
-  
+  - Screenshot filename: `06_code_queue_issue_service.png`
+  - Example:
     ![IssueService – Queue + Load](06_code_queue_issue_service.png)
 
 - Domain model with contact details and preferences
   - File: `MunicipalityMvc.Core/Models/IssueReport.cs`
   - Highlights: `TicketCode`, `FirstName`, `LastName`, `Email`, `Phone`, `WantsEmailUpdates`, `WantsSmsUpdates`, `AttachmentPaths`
-  - Screenshot:
-  
+  - Screenshot filename: `09_code_issue_report_model.png`
+  - Example:
     ![IssueReport – Model](09_code_issue_report_model.png)
 
 - Dependency Injection setup
   - File: `MunicipalityMvc.Web/Program.cs`
   - Highlights: registering `IIssueService` with base data folder, building and running app
-  - Screenshot:
-  
+  - Screenshot filename: `10_code_di_program.png`
+  - Example:
     ![Program – DI](10_code_di_program.png)
 
 - Ticket submission and file staging
   - File: `MunicipalityMvc.Web/Controllers/ReportsController.cs` (Create POST)
   - Highlights: accepting contact + preferences, staging uploads with original filenames, constructing `IssueReport`, calling `AddAsync`
-  - Screenshot:
-  
+  - Screenshot filename: `code_reports_controller_create.png` (or update this link to your chosen name)
+  - Example (using current image):
     ![ReportsController – Create](11_code_reports_controller_success.png)
 
 - User engagement during submission (progress + messages)
   - File: `MunicipalityMvc.Web/Views/Reports/Create.cshtml`
   - Highlights: animated progress bar, rotating toasts with staged delay
-  - Screenshot placeholder: `docs/code_create_progress.png` (add when available)
+  - Screenshot filename: `code_create_progress.png`
 
 - Success page feedback and privacy
   - File: `MunicipalityMvc.Web/Views/Reports/Success.cshtml`
   - Highlights: one-time toast/notification, queue position, ticket details
-  - Screenshot placeholder: `docs/code_success_toast.png` (add when available)
+  - Screenshot filename: `code_success_toast.png`
 
 - Public reports list with privacy adjustments
   - File: `MunicipalityMvc.Web/Views/Reports/Index.cshtml`
   - Highlights: shows Ticket, Category, Location, Description only; copy-to-clipboard; search
-  - Screenshot:
-  
+  - Screenshot filename: `13_code_reports_index_privacy.png`
+  - Example:
     ![Reports Index – Razor + JS](13_code_reports_index_privacy.png)
 
 - Enqueue + persist + bottom methods
   - File: `MunicipalityMvc.Core/Services/IssueService.cs`
   - Highlights: `AddAsync` (enqueue + persist); `GetPositionAsync`; `PersistQueue()`
-  - Screenshot:
-  
+  - Screenshot filename: `07_code_queue_add_persist.png`
+  - Example:
     ![IssueService – Add & Persist](07_code_queue_add_persist.png)
 
 - Service contract
   - File: `MunicipalityMvc.Core/Services/IIssueService.cs`
-  - Screenshot:
-  
+  - Screenshot filename: `08_code_service_contract.png`
+  - Example:
     ![IIssueService](08_code_service_contract.png)
 
 - Controller success action
   - File: `MunicipalityMvc.Web/Controllers/ReportsController.cs`
-  - Screenshot:
-  
+  - Screenshot filename: `12_code_reports_controller_success.png`
+  - Example:
     ![ReportsController – Success](12_code_reports_controller_success.png)
+
+## Detailed code walkthrough
+- Issue lifecycle (queue)
+  - New tickets are enqueued and the queue is serialized to `AppData/data/issues.json` for durability
+  - Queue position is computed from the current order and displayed on the success page
+- Attachments
+  - Uploaded files are copied to `AppData/data/<ticket-id>/` using their original filenames; the paths are saved with the ticket
+- Contact & preferences
+  - Optional `FirstName`, `LastName`, `Email`, `Phone`, and opt‑in switches `WantsEmailUpdates`/`WantsSmsUpdates` are stored per ticket
+- UI feedback (engagement)
+  - Create page: animated progress bar + rotating toasts during a brief staged delay before submission completes
+  - Success page: one‑time toast and optional browser notification personalised with the submitter’s name
+- Privacy in public list
+  - Public list shows only Ticket, Category, Location, and Description (no personal details)
 
 ### Screenshot tips
 - Use VS2022 with a dark or light theme; zoom ~120% for readability.
