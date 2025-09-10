@@ -26,15 +26,15 @@ Home (Main menu)
 
 Report Issue (Create)
 
-![Report Issue – Create](docs/02_report_create.png)
+![Report Issue – Create](02_report_create.png)
 
 Report Success (Details with queue position)
 
-![Report Success](docs/03_report_success.png)
+![Report Success](03_report_success.png)
 
 All Reports (Public list)
 
-![All Reports](docs/04_reports_list.png)
+![All Reports](04_reports_list.png)
 
 ## Requirements Matrix
 - Main menu with three tasks; only “Report Issues” enabled: Implemented in `Views/Home/Index.cshtml`.
@@ -93,32 +93,32 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - What you see: Friendly hero, primary CTA to “Report an Issue”, cards for key actions.
 - Why it matters: Meets brief by showing three tasks and enabling only Report Issues initially.
 
-![Home – Main Menu](docs/01_home.png)
+![Home – Main Menu](01_home.png)
 
 2) Report Issue (Create)
 - Fields: Name + Surname (optional), Email + Phone (optional), Allow Email Updates, Allow SMS Updates, Location, Category, Description, Attachments (multi‑upload).
 - UX: Clean card layout; validation; submission button shows spinner; animated progress bar runs with encouraging messages.
 
-![Report Issue – Create](docs/02_report_create.png)
+![Report Issue – Create](02_report_create.png)
 
 3) Proactive Feedback During Submit
 - What happens: As soon as Submit is clicked, we show an animated progress bar and cycle helpful toasts (e.g., “Packing your report…”, “Saving to the queue…”). This both informs and motivates.
 - Implementation: Lightweight front‑end timer, followed by a real submit; no server delay required.
 
-![Submit – Progress & Toasts](docs/02a_submit_progress.png)
+![Submit – Progress & Toasts](02a_submit_progress.png)
 
 4) Success Page
 - Shows: Ticket code (short, friendly), queue position, full details, attachment filenames.
 - Feedback: One‑time toast (and browser notification if permitted) personalized with the submitter’s name.
 - Privacy: Only the owner sees contact details here; the public list hides contact info.
 
-![Report Success](docs/03_report_success.png)
+![Report Success](03_report_success.png)
 
 5) Public Reports List
 - Shows: Ticket, Category, Location, and Description only.
 - Extras: Copy ticket to clipboard; client‑side search box.
 
-![All Reports](docs/04_reports_list.png)
+![All Reports](04_reports_list.png)
 
 ## Data Handling & Persistence
 - Queue storage: `IssueService` keeps an in-memory `Queue<IssueReport>` and persists the full queue to `issues.json`.
@@ -133,7 +133,7 @@ Below are the key features, each paired with a screenshot placeholder you can re
 4) The browser is redirected to Success, which reads the ticket and computes queue position.
 5) The public list reads the whole queue as a summary.
 
-![Data Folder – issues.json and ticket folders](docs/05_data_folder.png)
+![Data Folder – issues.json and ticket folders](05_data_folder.png)
 
 ## Engagement & Accessibility
 - Submission feedback: progress bar + encouraging toasts while preparing the ticket.
@@ -159,28 +159,28 @@ Add screenshots of the following key areas to demonstrate implementation quality
   - Highlights: private `Queue<IssueReport> _queue`, constructor loading queue from JSON, `AddAsync` enqueuing and persisting, `GetPositionAsync`, `PersistQueue()`
   - Screenshot:
   
-    ![IssueService – Queue + Load](docs/06_code_queue_issue_service.png)
+    ![IssueService – Queue + Load](06_code_queue_issue_service.png)
 
 - Domain model with contact details and preferences
   - File: `MunicipalityMvc.Core/Models/IssueReport.cs`
   - Highlights: `TicketCode`, `FirstName`, `LastName`, `Email`, `Phone`, `WantsEmailUpdates`, `WantsSmsUpdates`, `AttachmentPaths`
   - Screenshot:
   
-    ![IssueReport – Model](docs/09_code_issue_report_model.png)
+    ![IssueReport – Model](09_code_issue_report_model.png)
 
 - Dependency Injection setup
   - File: `MunicipalityMvc.Web/Program.cs`
   - Highlights: registering `IIssueService` with base data folder, building and running app
   - Screenshot:
   
-    ![Program – DI](docs/10_code_di_program.png)
+    ![Program – DI](10_code_di_program.png)
 
 - Ticket submission and file staging
   - File: `MunicipalityMvc.Web/Controllers/ReportsController.cs` (Create POST)
   - Highlights: accepting contact + preferences, staging uploads with original filenames, constructing `IssueReport`, calling `AddAsync`
   - Screenshot:
   
-    ![ReportsController – Create](docs/11_code_reports_controller_success.png)
+    ![ReportsController – Create](11_code_reports_controller_success.png)
 
 - User engagement during submission (progress + messages)
   - File: `MunicipalityMvc.Web/Views/Reports/Create.cshtml`
@@ -197,26 +197,26 @@ Add screenshots of the following key areas to demonstrate implementation quality
   - Highlights: shows Ticket, Category, Location, Description only; copy-to-clipboard; search
   - Screenshot:
   
-    ![Reports Index – Razor + JS](docs/13_code_reports_index_privacy.png)
+    ![Reports Index – Razor + JS](13_code_reports_index_privacy.png)
 
 - Enqueue + persist + bottom methods
   - File: `MunicipalityMvc.Core/Services/IssueService.cs`
   - Highlights: `AddAsync` (enqueue + persist); `GetPositionAsync`; `PersistQueue()`
   - Screenshot:
   
-    ![IssueService – Add & Persist](docs/07_code_queue_add_persist.png)
+    ![IssueService – Add & Persist](07_code_queue_add_persist.png)
 
 - Service contract
   - File: `MunicipalityMvc.Core/Services/IIssueService.cs`
   - Screenshot:
   
-    ![IIssueService](docs/08_code_service_contract.png)
+    ![IIssueService](08_code_service_contract.png)
 
 - Controller success action
   - File: `MunicipalityMvc.Web/Controllers/ReportsController.cs`
   - Screenshot:
   
-    ![ReportsController – Success](docs/12_code_reports_controller_success.png)
+    ![ReportsController – Success](12_code_reports_controller_success.png)
 
 ### Screenshot tips
 - Use VS2022 with a dark or light theme; zoom ~120% for readability.
