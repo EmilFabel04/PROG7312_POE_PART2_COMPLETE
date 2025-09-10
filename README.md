@@ -92,6 +92,27 @@ The app will open at `http://localhost:<port>`.
 3) Set startup project to `MunicipalityMvc.Web`
 4) Build, then F5
 
+### Clone from GitHub (recommended)
+1. Clone the repository
+   - HTTPS:
+     ```
+     git clone <YOUR_REPO_URL>.git
+     ```
+   - SSH:
+     ```
+     git clone git@github.com:<ORG_OR_USER>/<REPO>.git
+     ```
+2. Open in Visual Studio or CLI
+   - Visual Studio: double‑click `MunicipalityMVC.sln`, set `MunicipalityMvc.Web` as startup, F5
+   - CLI:
+     ```
+     dotnet build MunicipalityMVC.sln -c Release
+     dotnet run --project MunicipalityMvc.Web
+     ```
+3. First run notes
+   - Trust the dev HTTPS certificate if prompted
+   - The app writes data to `MunicipalityMvc.Web/AppData/data`
+
 ## Usage Guide
 1. Home → click “Report an Issue”.
 2. Optionally enter name/surname and contact info; choose email/SMS updates.
