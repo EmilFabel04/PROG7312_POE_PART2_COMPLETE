@@ -206,7 +206,7 @@ Add screenshots of the following key areas to demonstrate the queue‑based desi
   - Highlights: accepting contact + preferences, staging uploads with original filenames, constructing `IssueReport`, calling `AddAsync`
   - Screenshot filename: `code_reports_controller_create.png` (or update this link to your chosen name)
   - Example (using current image):
-    ![ReportsController – Create](docs/11_code_reports_controller_success.png)
+    ![ReportsController – Create](docs/11_code_reports_controller_create.png)
 
 - User engagement during submission (progress + messages)
   - File: `MunicipalityMvc.Web/Views/Reports/Create.cshtml`
