@@ -4,10 +4,8 @@ using MunicipalityMvc.Core.Models;
 
 namespace MunicipalityMvc.Core.Services;
 
-/// <summary>
-/// Stores issue reports using a FIFO queue and persists them to a JSON file.
-/// This keeps Part 1 simple, offline-friendly, and easy to review.
-/// </summary>
+// Stores issue reports using a FIFO queue and persists them to a JSON file.
+// This keeps Part 1 simple, offline-friendly, and easy to review.
 public sealed class IssueService : IIssueService
 {
 	private readonly string _dataDirectory;
@@ -33,7 +31,6 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
-	/// <inheritdoc />
 	// Return a snapshot of the current queue as a read-only list.
 	public Task<IReadOnlyList<IssueReport>> GetAllAsync(CancellationToken cancellationToken = default)
 	{
@@ -43,7 +40,6 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
-	/// <inheritdoc />
 	// Enqueue a new report, copy attachments, then persist the full queue to disk.
 	public async Task<IssueReport> AddAsync(IssueReport report, IEnumerable<string> attachmentSourcePaths, CancellationToken cancellationToken = default)
 	{
@@ -78,7 +74,6 @@ public sealed class IssueService : IIssueService
 		return $"MS-{new string(buffer)}";
 	}
 
-	/// <inheritdoc />
 	// Look up a report by its unique Id.
 	public Task<IssueReport?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
 	{
@@ -88,7 +83,6 @@ public sealed class IssueService : IIssueService
 		}
 	}
 
-	/// <inheritdoc />
 	// Compute a 1-based position for a report in the queue.
 	public Task<int?> GetPositionAsync(Guid id, CancellationToken cancellationToken = default)
 	{
