@@ -72,6 +72,12 @@ body {
   transition: transform .15s ease-in-out;
 }
 
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .display-6 { font-size: 1.6rem; }
+  .btn-lg { padding: .5rem 1rem; font-size: 1rem; }
+}
+
 .table thead th {
   background-color: #f1f5fb;
 }
