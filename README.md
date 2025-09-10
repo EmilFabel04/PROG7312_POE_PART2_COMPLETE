@@ -66,7 +66,7 @@ All Reports (Public list)
    - Visual Studio 2022 17.8 or later
    - Workload: “ASP.NET and web development” (includes .NET 8 SDK)
 2. Unzip & open
-   - Download the ZIP of this repository
+   - Download the ZIP of this repository or from submission
    - Extract to a short path (e.g., `C:\Projects\MunicipalityMVC`) to avoid long path issues
    - Double‑click `MunicipalityMVC.sln` to open the solution in Visual Studio
 3. Restore & select startup
@@ -92,11 +92,11 @@ The app will open at `http://localhost:<port>`.
 3) Set startup project to `MunicipalityMvc.Web`
 4) Build, then F5
 
-### Clone from GitHub (recommended)
+### Clone from GitHub 
 1. Clone the repository
    - HTTPS:
      ```
-     git clone <YOUR_REPO_URL>.git
+     git clone <THIS_REPO_URL>.git
      ```
    - SSH:
      ```
