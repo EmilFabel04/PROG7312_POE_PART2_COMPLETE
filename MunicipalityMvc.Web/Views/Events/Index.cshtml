@@ -1,0 +1,69 @@
+@model MunicipalityMvc.Web.Controllers.EventsIndexViewModel
+@{
+    ViewData["Title"] = "Events & Announcements";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Events & Announcements</h1>
+            <p>Stay informed about upcoming events and announcements.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Upcoming Events</h2>
+            @if (Model.UpcomingEvents.Any())
+            {
+                <div class="list-group">
+                    @foreach (var evt in Model.UpcomingEvents)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="mb-1">@evt.Title</h5>
+                            <p class="mb-1">@evt.Description</p>
+                            <small class="text-muted">
+                                <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
+                                <strong>Location:</strong> @evt.Location
+                            </small>
+                            <div class="mt-2">
+                                <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No upcoming events.</p>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h2>Announcements</h2>
+            @if (Model.ActiveAnnouncements.Any())
+            {
+                <div class="list-group">
+                    @foreach (var announcement in Model.ActiveAnnouncements)
+                    {
+                        <div class="list-group-item">
+                            <h5 class="mb-1">@announcement.Title</h5>
+                            <p class="mb-1">@announcement.Description</p>
+                            <small class="text-muted">
+                                <strong>Date:</strong> @announcement.Date.ToString("MMM dd, yyyy") |
+                                <strong>Priority:</strong> @announcement.Priority
+                            </small>
+                            <div class="mt-2">
+                                <a class="btn btn-sm btn-outline-primary" asp-action="AnnouncementDetails" asp-route-id="@announcement.Id">View Details</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">No active announcements.</p>
+            }
+        </div>
+    </div>
+</div>
