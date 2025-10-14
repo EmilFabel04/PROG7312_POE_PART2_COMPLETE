@@ -20,6 +20,9 @@ namespace MunicipalityMvc.Core.Services
         
         // queue for announcement processing
         private readonly Queue<Announcement> _announcementQueue = new();
+        
+        // priority queue for high priority announcements
+        private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -153,8 +156,22 @@ namespace MunicipalityMvc.Core.Services
             // populate announcement queue with active announcements
             foreach (var announcement in _announcements.Where(a => a.IsActive))
             {
-             _announcementQueue.Enqueue(announcement);
-            }
+                _announcementQueue.Enqueue(announcement);
+                
+                // add high priority announcements to priority queue
+                if (announcement.Priority == "High")
+                {
+              _priorityAnnouncements.Enqueue(announcement, 1);
+                }
+                else if (announcement.Priority == "Normal")
+                {
+                    _priorityAnnouncements.Enqueue(announcement, 2);
+                }
+                else if (announcement.Priority == "Low")
+                {
+                    _priorityAnnouncements.Enqueue(announcement, 3);
+                }
+        }
         }
 
         // get upcoming events
@@ -171,7 +188,6 @@ namespace MunicipalityMvc.Core.Services
             {
              query = query.Where(e => e.Title.Contains(searchTerm) || e.Description.Contains(searchTerm));
             }
-
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(e => e.Category == category);
@@ -200,7 +216,7 @@ namespace MunicipalityMvc.Core.Services
             var evt = _events.FirstOrDefault(e => e.Id == eventId);
             if (evt != null)
             {
-                // evt.ViewCount++; // todo
+                   // evt.ViewCount++; // todo
               SaveEvents();
             }
             await Task.CompletedTask;
@@ -213,7 +229,6 @@ namespace MunicipalityMvc.Core.Services
             return await Task.FromResult(_announcements.Where(a => a.IsActive && 
                 (a.ExpiryDate == null || a.ExpiryDate > now)).OrderByDescending(a => a.Date));
         }
-
         // search announcements
         public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority)
         {
@@ -223,17 +238,14 @@ namespace MunicipalityMvc.Core.Services
             {
                 query = query.Where(a => a.Title.Contains(searchTerm) || a.Description.Contains(searchTerm));
             }
-
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(a => a.Category == category);
             }
-
             if (!string.IsNullOrWhiteSpace(priority))
             {
                 query = query.Where(a => a.Priority == priority);
             }
-
             return await Task.FromResult(query.OrderByDescending(a => a.Date));
         }
 
@@ -281,5 +293,5 @@ namespace MunicipalityMvc.Core.Services
             var announcementsJson = JsonSerializer.Serialize(_announcements, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(announcementsFile, announcementsJson);
         }
-    }
+ }
 }
