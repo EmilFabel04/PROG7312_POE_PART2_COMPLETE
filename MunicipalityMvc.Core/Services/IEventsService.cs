@@ -17,5 +17,9 @@ namespace MunicipalityMvc.Core.Services
         
         Task<IEnumerable<string>> GetEventCategoriesAsync();
         Task<IEnumerable<string>> GetAnnouncementCategoriesAsync();
+        
+        // search history with stack
+        Task RecordSearchAsync(string searchTerm, string? category = null);
+        Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync();
     }
 }

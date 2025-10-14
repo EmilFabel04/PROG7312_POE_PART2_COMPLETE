@@ -23,6 +23,9 @@ namespace MunicipalityMvc.Core.Services
         
         // priority queue for high priority announcements
         private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
+        
+        // stack for user search history
+        private readonly Stack<UserSearchHistory> _recentSearches = new();
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -277,6 +280,41 @@ namespace MunicipalityMvc.Core.Services
         public async Task<IEnumerable<string>> GetAnnouncementCategoriesAsync()
         {
             return await Task.FromResult(_announcements.Select(a => a.Category).Distinct().OrderBy(c => c));
+        }
+        
+        // record search history using stack
+        public async Task RecordSearchAsync(string searchTerm, string? category = null)
+        {
+            var search = new UserSearchHistory
+            {
+                SearchTerm = searchTerm,
+                Category = category,
+                SearchDate = DateTime.UtcNow
+            };
+            
+            _recentSearches.Push(search);
+            
+            // keep only last 10 searches
+            if (_recentSearches.Count > 10)
+            {
+                var temp = new Stack<UserSearchHistory>();
+                for (int i = 0; i < 10; i++)
+                {
+                    temp.Push(_recentSearches.Pop());
+                }
+                _recentSearches.Clear();
+                while (temp.Count > 0)
+                {
+                    _recentSearches.Push(temp.Pop());
+                }
+            }
+            await Task.CompletedTask;
+        }
+        
+        // get recent searches from stack
+        public async Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync()
+        {
+            return await Task.FromResult(_recentSearches.ToArray());
         }
 
         // save events
