@@ -99,6 +99,42 @@ namespace MunicipalityMvc.Core.Services
                     Location = "Town Hall",
                     Category = "Government",
                     IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Farmers Market",
+                    Description = "Weekly farmers market with fresh local produce",
+                    Date = DateTime.Today.AddDays(3),
+                    Location = "Market Square",
+                    Category = "Community",
+                    IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Art Exhibition",
+                    Description = "Local artists showcase their latest works",
+                    Date = DateTime.Today.AddDays(21),
+                    Location = "Community Center",
+                    Category = "Culture",
+                    IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Youth Sports Tournament",
+                    Description = "Annual youth soccer and basketball tournament",
+                    Date = DateTime.Today.AddDays(28),
+                    Location = "Sports Complex",
+                    Category = "Sports",
+                    IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Emergency Preparedness Workshop",
+                    Description = "Learn essential emergency preparedness skills",
+                    Date = DateTime.Today.AddDays(10),
+                    Location = "Fire Station",
+                    Category = "Education",
+                    IsRecurring = false
                 }
             };
 
@@ -117,7 +153,8 @@ namespace MunicipalityMvc.Core.Services
                     Description = "Main Street will be closed for construction from 8 AM to 5 PM",
                     Date = DateTime.Today,
                     Category = "Infrastructure",
-                    Priority = "High"
+                    Priority = "High",
+                    ExpiryDate = DateTime.Today.AddDays(3)
                 },
                 new Announcement
                 {
@@ -125,6 +162,47 @@ namespace MunicipalityMvc.Core.Services
                     Description = "The library will now be open until 8 PM on weekdays",
                 Date = DateTime.Today.AddDays(-1),
                     Category = "Services",
+                    Priority = "Normal"
+                },
+                new Announcement
+                {
+                    Title = "Water Shutoff",
+                    Description = "Scheduled water maintenance in the northern SUburbs",
+                    Date = DateTime.Today.AddDays(2),
+                    Category = "Infrastructure",
+                    Priority = "High",
+                    ExpiryDate = DateTime.Today.AddDays(3)
+                },
+                new Announcement
+                {
+                    Title = "Public Holiday Notice",
+                    Description = "Municipal offices will be closed for public holiday",
+                    Date = DateTime.Today.AddDays(5),
+                    Category = "Government",
+                    Priority = "Low"
+                },
+                new Announcement
+                {
+                    Title = "Recycling Program Update",
+                    Description = "New recycling bins available at community centers",
+                    Date = DateTime.Today.AddDays(-3),
+                    Category = "Environment",
+                    Priority = "Normal"
+                },
+                new Announcement
+                {
+                    Title = "School Zone Safety",
+                    Description = "Reminder: Reduced speed limits in school zones during term time",
+                    Date = DateTime.Today.AddDays(-2),
+                    Category = "Safety",
+                    Priority = "High"
+                },
+                new Announcement
+                {
+                    Title = "Community Garden Opening",
+                    Description = "New community garden opens this weekend for residents",
+                    Date = DateTime.Today.AddDays(1),
+                    Category = "Community",
                     Priority = "Normal"
                 }
             };

@@ -6,9 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container (MVC controllers + views)
 builder.Services.AddControllersWithViews();
 
-// Configure app data directory and register the queue-backed issue service
+// Configure app data directory and register services
 var appData = Path.Combine(builder.Environment.ContentRootPath, "AppData");
 builder.Services.AddSingleton<IIssueService>(_ => new IssueService(appData));
+builder.Services.AddSingleton<IEventsService>(_ => new EventsService(appData));
 
 var app = builder.Build();
 
