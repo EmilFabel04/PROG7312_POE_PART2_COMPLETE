@@ -21,13 +21,15 @@ namespace MunicipalityMvc.Web.Controllers
             var activeAnnouncements = await _eventsService.GetActiveAnnouncementsAsync();
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
             var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();
+            var recommendedEvents = await _eventsService.GetRecommendedEventsAsync();
 
             var viewModel = new EventsIndexViewModel
             {
                 UpcomingEvents = upcomingEvents,
                 ActiveAnnouncements = activeAnnouncements,
                 EventCategories = eventCategories,
-                AnnouncementCategories = announcementCategories
+                AnnouncementCategories = announcementCategories,
+                RecommendedEvents = recommendedEvents
             };
 
             return View(viewModel);
@@ -108,6 +110,7 @@ namespace MunicipalityMvc.Web.Controllers
         public IEnumerable<Announcement> ActiveAnnouncements { get; set; } = new List<Announcement>();
         public IEnumerable<string> EventCategories { get; set; } = new List<string>();
         public IEnumerable<string> AnnouncementCategories { get; set; } = new List<string>();
+        public IEnumerable<Event> RecommendedEvents { get; set; } = new List<Event>();
     }
 
     public class EventsSearchViewModel
