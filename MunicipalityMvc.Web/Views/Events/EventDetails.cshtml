@@ -1,0 +1,22 @@
+@model MunicipalityMvc.Core.Models.Event
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Title</h2>
+            <p class="card-text">@Model.Description</p>
+            
+            <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item"><strong>Date:</strong> @Model.Date.ToString("MMMM dd, yyyy")</li>
+                <li class="list-group-item"><strong>Location:</strong> @Model.Location</li>
+                <li class="list-group-item"><strong>Category:</strong> @Model.Category</li>
+            </ul>
+        </div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back to Events</a>
+</div>
+

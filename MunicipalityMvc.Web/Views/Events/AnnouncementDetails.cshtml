@@ -1,0 +1,27 @@
+@model MunicipalityMvc.Core.Models.Announcement
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">@Model.Title</h2>
+            <p class="card-text">@Model.Description</p>
+            
+            <ul class="list-group list-group-flush mt-3">
+                <li class="list-group-item"><strong>Published:</strong> @Model.Date.ToString("MMMM dd, yyyy")</li>
+                <li class="list-group-item"><strong>Category:</strong> @Model.Category</li>
+                <li class="list-group-item"><strong>Priority:</strong> <span class="badge bg-@(Model.Priority == "High" ? "danger" : Model.Priority == "Normal" ? "warning" : "secondary")">@Model.Priority</span></li>
+                
+                @if (Model.ExpiryDate.HasValue)
+                {
+                    <li class="list-group-item"><strong>Expires:</strong> @Model.ExpiryDate.Value.ToString("MMMM dd, yyyy")</li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary mt-3">Back to Announcements</a>
+</div>
+
