@@ -330,12 +330,40 @@ namespace MunicipalityMvc.Core.Services
         // get popular categories using concurrent dictionary
         public async Task<IEnumerable<string>> GetPopularCategoriesAsync()
         {
-        return await Task.FromResult(_categorySearchCounts
+            return await Task.FromResult(_categorySearchCounts
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
                 .Take(5));
         }
-
+        
+        // recommendation algorithm based on search history
+        public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
+        {
+            // get most searched categories
+            var popularCategories = _categorySearchCounts
+                .OrderByDescending(x => x.Value)
+                .Select(x => x.Key)
+                .Take(3)
+                .ToList();
+            
+            if (!popularCategories.Any())
+            {
+                // if no search history, return upcoming events
+                return await GetUpcomingEventsAsync();
+            }
+            // find events in popular categories
+            var recommendedEvents = new List<Event>();
+            foreach (var category in popularCategories)
+            {
+                if (_eventsByCategory.ContainsKey(category))
+                {
+                 recommendedEvents.AddRange(_eventsByCategory[category]
+                        .Where(e => e.Date >= DateTime.Today)
+                        .Take(3));
+                }
+            }
+            return await Task.FromResult(recommendedEvents.Distinct().OrderBy(e => e.Date));
+        }
         // save events
         private void SaveEvents()
         {

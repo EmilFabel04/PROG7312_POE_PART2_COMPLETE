@@ -24,5 +24,8 @@ namespace MunicipalityMvc.Core.Services
         
         // popular categories using concurrent dictionary
         Task<IEnumerable<string>> GetPopularCategoriesAsync();
+        
+        // recommendation algorithm
+        Task<IEnumerable<Event>> GetRecommendedEventsAsync();
     }
 }

@@ -66,6 +66,12 @@ namespace MunicipalityMvc.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // record search for recommendations
+            if (!string.IsNullOrEmpty(searchModel.SearchTerm))
+            {
+                await _eventsService.RecordSearchAsync(searchModel.SearchTerm, searchModel.Category);
+            }
+
             // search events and announcements
             var events = await _eventsService.SearchEventsAsync(
                 searchModel.SearchTerm, 
