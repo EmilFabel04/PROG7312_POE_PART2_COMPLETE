@@ -1,4 +1,5 @@
 using MunicipalityMvc.Core.Models;
+using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace MunicipalityMvc.Core.Services
@@ -26,6 +27,9 @@ namespace MunicipalityMvc.Core.Services
         
         // stack for user search history
         private readonly Stack<UserSearchHistory> _recentSearches = new();
+        
+        // concurrent dictionary for thread-safe category counts
+        private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -294,6 +298,12 @@ namespace MunicipalityMvc.Core.Services
             
             _recentSearches.Push(search);
             
+            // update category search count using concurrent dictionary
+            if (!string.IsNullOrEmpty(category))
+            {
+                _categorySearchCounts.AddOrUpdate(category, 1, (key, value) => value + 1);
+            }
+            
             // keep only last 10 searches
             if (_recentSearches.Count > 10)
             {
@@ -315,6 +325,15 @@ namespace MunicipalityMvc.Core.Services
         public async Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync()
         {
             return await Task.FromResult(_recentSearches.ToArray());
+        }
+        
+        // get popular categories using concurrent dictionary
+        public async Task<IEnumerable<string>> GetPopularCategoriesAsync()
+        {
+        return await Task.FromResult(_categorySearchCounts
+                .OrderByDescending(x => x.Value)
+                .Select(x => x.Key)
+                .Take(5));
         }
 
         // save events

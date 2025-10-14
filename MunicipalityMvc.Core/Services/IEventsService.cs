@@ -21,5 +21,8 @@ namespace MunicipalityMvc.Core.Services
         // search history with stack
         Task RecordSearchAsync(string searchTerm, string? category = null);
         Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync();
+        
+        // popular categories using concurrent dictionary
+        Task<IEnumerable<string>> GetPopularCategoriesAsync();
     }
 }
