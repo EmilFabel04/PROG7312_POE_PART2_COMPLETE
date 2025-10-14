@@ -14,6 +14,9 @@ namespace MunicipalityMvc.Core.Services
         private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
         // sorted dictionary for events by date
         private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
+        
+        // hashset for categories
+        private readonly HashSet<string> _uniqueCategories = new();
 
         public EventsService(string dataDirectory)
         {
@@ -137,9 +140,12 @@ namespace MunicipalityMvc.Core.Services
                 var dateKey = evt.Date.Date;
                 if (!_eventsByDate.ContainsKey(dateKey))
                 {
-                   _eventsByDate[dateKey] = new List<Event>();
+                    _eventsByDate[dateKey] = new List<Event>();
                 }
                 _eventsByDate[dateKey].Add(evt);
+                
+                // add to unique categories hashset
+                _uniqueCategories.Add(evt.Category);
             }
         }
 
@@ -241,10 +247,10 @@ namespace MunicipalityMvc.Core.Services
             await Task.CompletedTask;
         }
 
-        // get event categories 
+        // get event categories using hashset
         public async Task<IEnumerable<string>> GetEventCategoriesAsync()
         {
-            return await Task.FromResult(_eventsByCategory.Keys.OrderBy(k => k));
+            return await Task.FromResult(_uniqueCategories.OrderBy(c => c));
         }
 
         // get announcement categories
