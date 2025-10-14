@@ -9,12 +9,16 @@ namespace MunicipalityMvc.Core.Services
         private readonly string _dataDirectory;
         private readonly List<Event> _events = new();
         private readonly List<Announcement> _announcements = new();
+        
+        // dictionary  category lookups
+        private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
 
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
             Directory.CreateDirectory(_dataDirectory);
             LoadData();
+            InitializeDataStructures();
         }
 
         // load data of json files
@@ -39,7 +43,6 @@ namespace MunicipalityMvc.Core.Services
             {
                 CreateSampleEvents();
             }
-
             if (File.Exists(announcementsFile))
             {
                 var announcementsJson = File.ReadAllText(announcementsFile);
@@ -57,8 +60,7 @@ namespace MunicipalityMvc.Core.Services
                 CreateSampleAnnouncements();
             }
         }
-
-        // create sample events
+        // create demo events
         private void CreateSampleEvents()
         {
             var sampleEvents = new List<Event>
@@ -87,14 +89,14 @@ namespace MunicipalityMvc.Core.Services
             SaveEvents();
         }
 
-        // create sample announcements
+        // create demo announcements
         private void CreateSampleAnnouncements()
         {
             var sampleAnnouncements = new List<Announcement>
             {
                 new Announcement
                 {
-                    Title = "Road Closure Notice",
+                 Title = "Road Closure Notice",
                     Description = "Main Street will be closed for construction from 8 AM to 5 PM",
                     Date = DateTime.Today,
                     Category = "Infrastructure",
@@ -104,7 +106,7 @@ namespace MunicipalityMvc.Core.Services
                 {
                     Title = "New Library Hours",
                     Description = "The library will now be open until 8 PM on weekdays",
-                    Date = DateTime.Today.AddDays(-1),
+                Date = DateTime.Today.AddDays(-1),
                     Category = "Services",
                     Priority = "Normal"
                 }
@@ -114,12 +116,25 @@ namespace MunicipalityMvc.Core.Services
             SaveAnnouncements();
         }
 
+        // initialize data structures
+        private void InitializeDataStructures()
+        {
+            // populate events by category dictionary
+            foreach (var evt in _events)
+            {
+                if (!_eventsByCategory.ContainsKey(evt.Category))
+                {
+                _eventsByCategory[evt.Category] = new List<Event>();
+                }
+                _eventsByCategory[evt.Category].Add(evt);
+            }
+        }
+
         // get upcoming events
         public async Task<IEnumerable<Event>> GetUpcomingEventsAsync()
         {
             return await Task.FromResult(_events.Where(e => e.Date >= DateTime.Today).OrderBy(e => e.Date));
         }
-
         // search events
         public async Task<IEnumerable<Event>> SearchEventsAsync(string? searchTerm, string? category, DateTime? fromDate, DateTime? toDate)
         {
@@ -127,14 +142,13 @@ namespace MunicipalityMvc.Core.Services
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
-                query = query.Where(e => e.Title.Contains(searchTerm) || e.Description.Contains(searchTerm));
+             query = query.Where(e => e.Title.Contains(searchTerm) || e.Description.Contains(searchTerm));
             }
 
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(e => e.Category == category);
             }
-
             if (fromDate.HasValue)
             {
                 query = query.Where(e => e.Date >= fromDate.Value);
@@ -142,16 +156,15 @@ namespace MunicipalityMvc.Core.Services
 
             if (toDate.HasValue)
             {
-                query = query.Where(e => e.Date <= toDate.Value);
+             query = query.Where(e => e.Date <= toDate.Value);
             }
-
             return await Task.FromResult(query.OrderBy(e => e.Date));
         }
 
         // get event by id
         public async Task<Event?> GetEventByIdAsync(Guid id)
         {
-            return await Task.FromResult(_events.FirstOrDefault(e => e.Id == id));
+        return await Task.FromResult(_events.FirstOrDefault(e => e.Id == id));
         }
 
         // update view count
@@ -161,7 +174,7 @@ namespace MunicipalityMvc.Core.Services
             if (evt != null)
             {
                 // evt.ViewCount++; // todo
-                SaveEvents();
+              SaveEvents();
             }
             await Task.CompletedTask;
         }
@@ -215,10 +228,10 @@ namespace MunicipalityMvc.Core.Services
             await Task.CompletedTask;
         }
 
-        // get event categories
+        // get event categories 
         public async Task<IEnumerable<string>> GetEventCategoriesAsync()
         {
-            return await Task.FromResult(_events.Select(e => e.Category).Distinct().OrderBy(c => c));
+            return await Task.FromResult(_eventsByCategory.Keys.OrderBy(k => k));
         }
 
         // get announcement categories
@@ -234,7 +247,6 @@ namespace MunicipalityMvc.Core.Services
             var eventsJson = JsonSerializer.Serialize(_events, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(eventsFile, eventsJson);
         }
-
         // save announcements
         private void SaveAnnouncements()
         {
