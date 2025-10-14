@@ -53,12 +53,66 @@ namespace MunicipalityMvc.Web.Controllers
             return View(announcement);
         }
 
+        // search events
+        [HttpPost]
+        public async Task<IActionResult> Search(EventsSearchViewModel searchModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            // search events and announcements
+            var events = await _eventsService.SearchEventsAsync(
+                searchModel.SearchTerm, 
+                searchModel.Category, 
+                searchModel.FromDate, 
+                searchModel.ToDate);
+
+            var announcements = await _eventsService.SearchAnnouncementsAsync(
+                searchModel.SearchTerm, 
+                searchModel.Category, 
+                searchModel.Priority);
+
+            var eventCategories = await _eventsService.GetEventCategoriesAsync();
+            var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();
+
+            var viewModel = new EventsSearchResultsViewModel
+            {
+                SearchModel = searchModel,
+                Events = events,
+                Announcements = announcements,
+                EventCategories = eventCategories,
+                AnnouncementCategories = announcementCategories
+            };
+
+            return View("SearchResults", viewModel);
+        }
+
     }
 
-    // view model
+    // view models
     public class EventsIndexViewModel
     {
         public IEnumerable<Event> UpcomingEvents { get; set; } = new List<Event>();
         public IEnumerable<Announcement> ActiveAnnouncements { get; set; } = new List<Announcement>();
+    }
+
+    public class EventsSearchViewModel
+    {
+        public string? SearchTerm { get; set; }
+        public string? Category { get; set; }
+        public string? Priority { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
+
+    public class EventsSearchResultsViewModel
+    {
+        public EventsSearchViewModel SearchModel { get; set; } = new();
+        public IEnumerable<Event> Events { get; set; } = new List<Event>();
+        public IEnumerable<Announcement> Announcements { get; set; } = new List<Announcement>();
+        public IEnumerable<string> EventCategories { get; set; } = new List<string>();
+        public IEnumerable<string> AnnouncementCategories { get; set; } = new List<string>();
     }
 }
