@@ -17,7 +17,9 @@ namespace MunicipalityMvc.Core.Services
         
         // hashset for categories
         private readonly HashSet<string> _uniqueCategories = new();
-
+        
+        // queue for announcement processing
+        private readonly Queue<Announcement> _announcementQueue = new();
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -146,6 +148,12 @@ namespace MunicipalityMvc.Core.Services
                 
                 // add to unique categories hashset
                 _uniqueCategories.Add(evt.Category);
+            }
+            
+            // populate announcement queue with active announcements
+            foreach (var announcement in _announcements.Where(a => a.IsActive))
+            {
+             _announcementQueue.Enqueue(announcement);
             }
         }
 
