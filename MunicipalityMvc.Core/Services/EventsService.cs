@@ -12,6 +12,8 @@ namespace MunicipalityMvc.Core.Services
         
         // dictionary  category lookups
         private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
+        // sorted dictionary for events by date
+        private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
 
         public EventsService(string dataDirectory)
         {
@@ -124,9 +126,20 @@ namespace MunicipalityMvc.Core.Services
             {
                 if (!_eventsByCategory.ContainsKey(evt.Category))
                 {
-                _eventsByCategory[evt.Category] = new List<Event>();
+                    _eventsByCategory[evt.Category] = new List<Event>();
                 }
                 _eventsByCategory[evt.Category].Add(evt);
+            }
+            
+            // populate events by date sorted dictionary
+            foreach (var evt in _events)
+            {
+                var dateKey = evt.Date.Date;
+                if (!_eventsByDate.ContainsKey(dateKey))
+                {
+                   _eventsByDate[dateKey] = new List<Event>();
+                }
+                _eventsByDate[dateKey].Add(evt);
             }
         }
 
