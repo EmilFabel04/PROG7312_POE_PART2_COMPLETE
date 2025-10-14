@@ -41,6 +41,59 @@
         </div>
     </div>
 
+    <!-- Recent Events & Announcements Section -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h3>Upcoming Events</h3>
+            @if (ViewBag.RecentEvents != null && ((IEnumerable<dynamic>)ViewBag.RecentEvents).Any())
+            {
+                <div class="list-group">
+                    @foreach (var evt in ViewBag.RecentEvents)
+                    {
+                        <div class="list-group-item">
+                            <h6 class="mb-1">@evt.Title</h6>
+                            <p class="mb-1 small">@evt.Description</p>
+                            <small class="text-muted">
+                                <strong>Date:</strong> @evt.Date.ToString("MMM dd") |
+                                <strong>Location:</strong> @evt.Location
+                            </small>
+                        </div>
+                    }
+                </div>
+                <a asp-controller="Events" asp-action="Index" class="btn btn-sm btn-outline-primary mt-2">View All Events</a>
+            }
+            else
+            {
+                <p class="text-muted">No upcoming events.</p>
+            }
+        </div>
+        
+        <div class="col-md-6">
+            <h3>Recent Announcements</h3>
+            @if (ViewBag.RecentAnnouncements != null && ((IEnumerable<dynamic>)ViewBag.RecentAnnouncements).Any())
+            {
+                <div class="list-group">
+                    @foreach (var announcement in ViewBag.RecentAnnouncements)
+                    {
+                        <div class="list-group-item">
+                            <h6 class="mb-1">@announcement.Title</h6>
+                            <p class="mb-1 small">@announcement.Description</p>
+                            <small class="text-muted">
+                                <strong>Date:</strong> @announcement.Date.ToString("MMM dd") |
+                                <span class="badge bg-@(announcement.Priority == "High" ? "danger" : announcement.Priority == "Normal" ? "warning" : "secondary")">@announcement.Priority</span>
+                            </small>
+                        </div>
+                    }
+                </div>
+                <a asp-controller="Events" asp-action="Index" class="btn btn-sm btn-outline-primary mt-2">View All Announcements</a>
+            }
+            else
+            {
+                <p class="text-muted">No recent announcements.</p>
+            }
+        </div>
+    </div>
+
     <div class="alert alert-info mt-4" role="alert">
         You're making a difference. Thank you for helping improve our city!
     </div>

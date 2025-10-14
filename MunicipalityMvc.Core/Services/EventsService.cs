@@ -34,8 +34,27 @@ namespace MunicipalityMvc.Core.Services
         {
             _dataDirectory = dataDirectory;
             Directory.CreateDirectory(_dataDirectory);
+            
+            // clear old data and recreate with new
+            ClearData();
             LoadData();
             InitializeDataStructures();
+        }
+
+        // clear old data files
+        private void ClearData()
+        {
+            var eventsFile = Path.Combine(_dataDirectory, "events.json");
+            var announcementsFile = Path.Combine(_dataDirectory, "announcements.json");
+            
+            if (File.Exists(eventsFile))
+            {
+                File.Delete(eventsFile);
+            }
+            if (File.Exists(announcementsFile))
+            {
+                File.Delete(announcementsFile);
+            }
         }
 
         // load data of json files
