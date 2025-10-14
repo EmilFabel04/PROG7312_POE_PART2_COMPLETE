@@ -13,10 +13,10 @@ namespace MunicipalityMvc.Core.Models
         
         [Required]
         [StringLength(1000)]
-        public string Description { get; set; } = string.Empty; // FIX
+        public string Description { get; set; } = string.Empty;
         
         [Required]
-        public DateTime Date { get; set; } = DateTime.UtcNow; // FIX
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         
         public DateTime? ExpiryDate { get; set; }
         

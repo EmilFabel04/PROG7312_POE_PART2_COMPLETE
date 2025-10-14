@@ -223,8 +223,8 @@ namespace MunicipalityMvc.Core.Services
             var evt = _events.FirstOrDefault(e => e.Id == eventId);
             if (evt != null)
             {
-                   // evt.ViewCount++; // todo
-              SaveEvents();
+                // view tracking can be added later
+                SaveEvents();
             }
             await Task.CompletedTask;
         }
@@ -268,7 +268,7 @@ namespace MunicipalityMvc.Core.Services
             var announcement = _announcements.FirstOrDefault(a => a.Id == announcementId);
             if (announcement != null)
             {
-                // announcement.ViewCount++; // TODO
+                // view tracking can be added later
                 SaveAnnouncements();
             }
             await Task.CompletedTask;

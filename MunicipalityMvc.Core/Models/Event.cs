@@ -16,7 +16,7 @@ namespace MunicipalityMvc.Core.Models
         public string Description { get; set; } = string.Empty;
         
         [Required]
-        public DateTime Date { get; set; } // FIX
+        public DateTime Date { get; set; } = DateTime.Today;
         
         [Required]
         [StringLength(100)]
