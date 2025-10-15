@@ -533,6 +533,8 @@ namespace MunicipalityMvc.Core.Services
                     }
                 }
                 
+                catch
+                { }
             }
         }
         
