@@ -349,34 +349,49 @@ namespace MunicipalityMvc.Core.Services
         }
         }
 
-        // get upcoming events
+        // get upcoming events using sorted dictionary
         public async Task<IEnumerable<Event>> GetUpcomingEventsAsync()
         {
-            return await Task.FromResult(_events.Where(e => e.Date >= DateTime.Today).OrderBy(e => e.Date));
+            var upcomingEvents = new List<Event>();
+            var today = DateTime.Today;
+            
+            foreach (var kvp in _eventsByDate)
+            {
+        if (kvp.Key >= today)
+                {
+              upcomingEvents.AddRange(kvp.Value);
+                }
+            }
+            return await Task.FromResult(upcomingEvents);
         }
-        // search events
+        // search events using dictionary for category lookups
         public async Task<IEnumerable<Event>> SearchEventsAsync(string? searchTerm, string? category, DateTime? fromDate, DateTime? toDate)
         {
-            var query = _events.AsQueryable();
+            IEnumerable<Event> results;
 
-            if (!string.IsNullOrWhiteSpace(searchTerm))
+            // use dictionary for fast category lookup
+            if (!string.IsNullOrWhiteSpace(category) && _eventsByCategory.ContainsKey(category))
             {
-             query = query.Where(e => e.Title.Contains(searchTerm) || e.Description.Contains(searchTerm));
+                results = _eventsByCategory[category];
             }
-            if (!string.IsNullOrWhiteSpace(category))
+            else
             {
-                query = query.Where(e => e.Category == category);
+                results = _events;
+            }
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {results = results.Where(e => e.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) || 
+                                           e.Description.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
             }
             if (fromDate.HasValue)
             {
-                query = query.Where(e => e.Date >= fromDate.Value);
+                results = results.Where(e => e.Date >= fromDate.Value);
             }
-
-            if (toDate.HasValue)
+if (toDate.HasValue)
             {
-             query = query.Where(e => e.Date <= toDate.Value);
+                results = results.Where(e => e.Date <= toDate.Value);
             }
-            return await Task.FromResult(query.OrderBy(e => e.Date));
+            
+            return await Task.FromResult(results.OrderBy(e => e.Date));
         }
 
         // get event by id
@@ -397,14 +412,35 @@ namespace MunicipalityMvc.Core.Services
             await Task.CompletedTask;
         }
 
-        // get active announcements
+        // get active announcements using priority queue
         public async Task<IEnumerable<Announcement>> GetActiveAnnouncementsAsync()
         {
+            var activeAnnouncements = new List<Announcement>();
             var now = DateTime.UtcNow;
-            return await Task.FromResult(_announcements.Where(a => a.IsActive && 
-                (a.ExpiryDate == null || a.ExpiryDate > now))
-                .OrderBy(a => a.Priority == "High" ? 1 : a.Priority == "Normal" ? 2 : 3)
-                .ThenByDescending(a => a.Date));
+            var tempQueue = new PriorityQueue<Announcement, int>();
+            
+            // get all announcements from priority queue while preserving it
+            while (_priorityAnnouncements.Count > 0)
+            {
+                _priorityAnnouncements.TryDequeue(out var announcement, out var priority);
+                if (announcement != null)
+                {tempQueue.Enqueue(announcement, priority);
+                    if (announcement.IsActive && (announcement.ExpiryDate == null || announcement.ExpiryDate > now))
+                    {
+                activeAnnouncements.Add(announcement);
+                    }
+            }
+            }
+            // restore priority queue
+            while (tempQueue.Count > 0)
+            {
+                tempQueue.TryDequeue(out var announcement, out var priority);
+                if (announcement != null)
+                {
+         _priorityAnnouncements.Enqueue(announcement, priority);
+                }
+            }
+            return await Task.FromResult(activeAnnouncements);
         }
         // search announcements
         public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority, DateTime? fromDate = null, DateTime? toDate = null)
