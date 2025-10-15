@@ -57,6 +57,36 @@
         </div>
     </div>
 
+    @if (Model.RecommendedEvents != null && Model.RecommendedEvents.Any())
+    {
+        <div class="row mt-4 mb-4">
+            <div class="col-md-12">
+                <h2>Recommended for You</h2>
+                <p class="text-muted">Based on your search history</p>
+                <div class="row">
+                    @foreach (var evt in Model.RecommendedEvents.Take(3))
+                    {
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@evt.Title</h5>
+                                    <p class="card-text">@evt.Description</p>
+                                    <small class="text-muted">
+                                        <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
+                                        <strong>Location:</strong> @evt.Location
+                                    </small>
+                                    <div class="mt-2">
+                                        <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
     <div class="row">
         <div class="col-md-6">
             <h2>Upcoming Events</h2>
@@ -120,34 +150,4 @@
             }
         </div>
     </div>
-
-    @if (Model.RecommendedEvents != null && Model.RecommendedEvents.Any())
-    {
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <h2>Recommended for You</h2>
-                <p class="text-muted">Based on your search history</p>
-                <div class="row">
-                    @foreach (var evt in Model.RecommendedEvents.Take(3))
-                    {
-                        <div class="col-md-4 mb-3">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">@evt.Title</h5>
-                                    <p class="card-text">@evt.Description</p>
-                                    <small class="text-muted">
-                                        <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
-                                        <strong>Location:</strong> @evt.Location
-                                    </small>
-                                    <div class="mt-2">
-                                        <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    }
 </div>

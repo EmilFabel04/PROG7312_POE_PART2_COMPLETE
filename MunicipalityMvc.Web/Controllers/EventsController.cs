@@ -8,40 +8,24 @@ namespace MunicipalityMvc.Web.Controllers
     public class EventsController : Controller
     {
         private readonly IEventsService _eventsService;
-        private readonly ILogger<EventsController> _logger;
 
-        public EventsController(IEventsService eventsService, ILogger<EventsController> logger)
+        public EventsController(IEventsService eventsService)
         {
             _eventsService = eventsService;
-            _logger = logger;
         }
 
-        // main events page
         public async Task<IActionResult> Index()
         {
-            // set user session for search history for recommendations
             _eventsService.SetUserSession(HttpContext.Session.Id);
             
             var upcomingEvents = await _eventsService.GetUpcomingEventsAsync();
             var activeAnnouncements = await _eventsService.GetActiveAnnouncementsAsync();
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
             var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();
-            
-            // only show recommendations if user has search history
             var recentSearches = await _eventsService.GetRecentSearchesAsync();
-            
-            // debug
-            _logger.LogInformation($"Recent searches count: {recentSearches.Count()}");
-            foreach (var search in recentSearches)
-            {
-                _logger.LogInformation($"Search: {search.SearchTerm}, Category: {search.Category}");
-            }
-            
             var recommendedEvents = recentSearches.Any() 
                 ? await _eventsService.GetRecommendedEventsAsync() 
                 : Enumerable.Empty<Event>();
-            
-            _logger.LogInformation($"Recommended events count: {recommendedEvents.Count()}");
 
             var viewModel = new EventsIndexViewModel
             {
@@ -88,10 +72,8 @@ namespace MunicipalityMvc.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // set user session for search history
             _eventsService.SetUserSession(HttpContext.Session.Id);
 
-            // record search for recommendations
             if (!string.IsNullOrEmpty(searchModel.SearchTerm) || !string.IsNullOrEmpty(searchModel.Category))
             {
                 await _eventsService.RecordSearchAsync(searchModel.SearchTerm ?? "", searchModel.Category);

@@ -30,8 +30,6 @@ namespace MunicipalityMvc.Core.Services
         
         // concurrent dictionary for category counts
         private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
-        
-      
         private string? _currentUserSession;
         
         public EventsService(string dataDirectory)
@@ -78,7 +76,7 @@ namespace MunicipalityMvc.Core.Services
             }
             else
             {
-                CreateSampleEvents(); // create some test data if file dosent exist
+                CreateSampleEvents();
             }
             if (File.Exists(announcementsFile))
             {
@@ -234,7 +232,7 @@ namespace MunicipalityMvc.Core.Services
             SaveEvents();
         }
 
-        // create demo announcements
+        // create sample announcements
         private void CreateSampleAnnouncements()
         {
             var sampleAnnouncements = new List<Announcement>
