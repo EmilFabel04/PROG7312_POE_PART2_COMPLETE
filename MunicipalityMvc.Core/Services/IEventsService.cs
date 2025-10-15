@@ -24,9 +24,6 @@ namespace MunicipalityMvc.Core.Services
         Task RecordSearchAsync(string searchTerm, string? category = null); // record what user searched
         Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync(); // get recent searches
         
-        // popular categories using concurrent dictionary
-        Task<IEnumerable<string>> GetPopularCategoriesAsync(); // get most searched categories
-        
         // recommendation algorithm
         Task<IEnumerable<Event>> GetRecommendedEventsAsync(); // get recommended events
     }

@@ -523,15 +523,6 @@ namespace MunicipalityMvc.Core.Services
             return await Task.FromResult(_recentSearches.ToArray());
         }
         
-        // get popular categories using concurrent dictionary
-        public async Task<IEnumerable<string>> GetPopularCategoriesAsync()
-        {
-            return await Task.FromResult(_categorySearchCounts
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .Take(5));
-        }
-        
         // recommendation algorithm based on search history using stack
         public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
         {
@@ -540,52 +531,36 @@ namespace MunicipalityMvc.Core.Services
             // if no search history return upcoming events
             if (_recentSearches.Count == 0)
             {
-                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
+                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(3));
             }
             
-            var recommendedEvents = new List<Event>();
-            var addedEventIds = new HashSet<Guid>();
             
-            // get last 3 searches from stack
-            var recentSearches = _recentSearches.ToArray().Take(3);
+            var mostRecentSearch = _recentSearches.Peek();
             
-            // for each recent search, find events from that category
-            foreach (var search in recentSearches)
+           
+            string categoryToUse = mostRecentSearch.Category;
+            
+            
+            if (string.IsNullOrEmpty(categoryToUse) && !string.IsNullOrEmpty(mostRecentSearch.SearchTerm))
             {
-                // first check if we searched by category
-                string categoryToUse = search.Category;
+                var matchedEvent = upcomingEvents
+                    .FirstOrDefault(e => e.Title.Contains(mostRecentSearch.SearchTerm, StringComparison.OrdinalIgnoreCase));
                 
-                // if no category but has search term, find the category of matching event
-                if (string.IsNullOrEmpty(categoryToUse) && !string.IsNullOrEmpty(search.SearchTerm))
+                if (matchedEvent != null)
                 {
-                    var matchedEvent = upcomingEvents
-                        .FirstOrDefault(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase));
-                    
-                    if (matchedEvent != null)
-                    {
-                        categoryToUse = matchedEvent.Category;
-                    }
-                }
-                
-                // now get events from that category
-                if (!string.IsNullOrEmpty(categoryToUse) && _eventsByCategory.ContainsKey(categoryToUse))
-                {
-                    var categoryEvents = _eventsByCategory[categoryToUse]
-                        .Where(e => e.Date >= DateTime.Today && !addedEventIds.Contains(e.Id))
-                        .Take(1);
-                    
-                    foreach (var evt in categoryEvents)
-                    {
-                        recommendedEvents.Add(evt);
-                        addedEventIds.Add(evt.Id);
-                    }
+                    categoryToUse = matchedEvent.Category;
                 }
             }
             
-            // if we have recommendations return them
-            if (recommendedEvents.Count > 0)
+           
+            if (!string.IsNullOrEmpty(categoryToUse) && _eventsByCategory.ContainsKey(categoryToUse))
             {
-                return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(3));
+                var categoryEvents = _eventsByCategory[categoryToUse]
+                    .Where(e => e.Date >= DateTime.Today)
+                    .OrderBy(e => e.Date)
+                    .Take(3);
+                
+                return await Task.FromResult(categoryEvents);
             }
             
             // fallback to upcoming events
