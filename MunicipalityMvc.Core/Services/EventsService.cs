@@ -33,6 +33,7 @@ namespace MunicipalityMvc.Core.Services
         
       
         private string? _currentUserSession;
+        
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -399,15 +400,20 @@ namespace MunicipalityMvc.Core.Services
       
         public void SetUserSession(string sessionId)
         {
-         _currentUserSession = sessionId;
-        LoadUserSearchHistory();
+            // only load if switching users
+            if (_currentUserSession != sessionId)
+            {
+                _currentUserSession = sessionId;
+                _recentSearches.Clear();
+                LoadUserSearchHistory();
+            }
         }
         
         public async Task RecordSearchAsync(string searchTerm, string? category = null)
         {
             var search = new UserSearchHistory
             {
-                SearchTerm = searchTerm,
+                SearchTerm = searchTerm ?? "",
                 Category = category,
                 SearchDate = DateTime.UtcNow
             };
@@ -419,9 +425,6 @@ namespace MunicipalityMvc.Core.Services
             {
                 _categorySearchCounts.AddOrUpdate(category, 1, (key, value) => value + 1);
             }
-            
-           
-            SaveUserSearchHistory();
             
             // keep only last 10 searches
             if (_recentSearches.Count > 10)
@@ -437,6 +440,8 @@ namespace MunicipalityMvc.Core.Services
                     _recentSearches.Push(temp.Pop());
                 }
             }
+            
+            SaveUserSearchHistory();
             await Task.CompletedTask;
         }
         
@@ -458,93 +463,81 @@ namespace MunicipalityMvc.Core.Services
         // recommendation algorithm based on search history using stack
         public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
         {
+            var upcomingEvents = _events.Where(e => e.Date >= DateTime.Today).ToList();
+            
+            // if no search history return upcoming events
             if (_recentSearches.Count == 0)
             {
-                // if no search history, return upcoming events
-                return await GetUpcomingEventsAsync();
+                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
             }
             
-            var recommendedEvents = new List<Event>();
-            var scoredEvents = new Dictionary<Guid, int>(); 
+            var recommendedEvents = new HashSet<Event>(); // use hashset to avoid duplicates
             
-            // use stack to get most recent searches
-            var recentSearches = _recentSearches.ToArray().Take(5);
-            
+            // use stack to get most recent searches 
+            var recentSearches = _recentSearches.ToArray().Take(3);
             
             foreach (var search in recentSearches)
             {
-                // find events matching recent search patterns
-                var matchingEvents = _events.Where(e => e.Date >= DateTime.Today);
-                
-                foreach (var evt in matchingEvents)
+                // recommend events from same category
+                if (!string.IsNullOrEmpty(search.Category))
                 {
-                    int score = 0;
+                    var categoryMatches = upcomingEvents
+                        .Where(e => e.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase))
+                        .Take(2);
                     
-                    // score based on categorymatch
-                    if (!string.IsNullOrEmpty(search.Category) && evt.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase))
+                    foreach (var evt in categoryMatches)
                     {
-                        score += 10;
+                        recommendedEvents.Add(evt);
                     }
+                }
+                
+                // recommend events with similar keywords in title
+                if (!string.IsNullOrEmpty(search.SearchTerm))
+                {
+                    var titleMatches = upcomingEvents
+                        .Where(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                        .Take(2);
                     
-                    // score based on search term relevance
-                    if (!string.IsNullOrEmpty(search.SearchTerm))
+                    foreach (var evt in titleMatches)
                     {
-                        if (evt.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
-                        {
-                            score += 8;
-                        }
-                        if (evt.Description.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
-                        {
-                            score += 5;
-                        }
-                    }
-                    
-                    // add or update event score
-                    if (score > 0)
-                    {
-                        if (scoredEvents.ContainsKey(evt.Id))
-                        {
-                            scoredEvents[evt.Id] += score;
-                        }
-                        else
-                        {
-                            scoredEvents[evt.Id] = score;
-                        }
+                        recommendedEvents.Add(evt);
                     }
                 }
             }
             
-           
-            var topEventIds = scoredEvents
+            // if we have enough recommendations return them
+            if (recommendedEvents.Count >= 3)
+            {
+                return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(6));
+            }
+            
+            // otherwise fill with events from popular categories
+            var popularCategories = _categorySearchCounts
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
-                .Take(6);
+                .Take(3);
             
-            recommendedEvents = _events
-                .Where(e => topEventIds.Contains(e.Id))
-                .OrderBy(e => e.Date)
-                .ToList();
-            
-            // if not enough recommendations, use popular categories from concurrent dictionary
-            if (recommendedEvents.Count < 3)
+            foreach (var category in popularCategories)
             {
-                var popularCategories = _categorySearchCounts
-                    .OrderByDescending(x => x.Value)
-                    .Select(x => x.Key)
-                    .Take(3);
-                
-                foreach (var category in popularCategories)
+                if (_eventsByCategory.ContainsKey(category))
                 {
-                    if (_eventsByCategory.ContainsKey(category))
+                    var categoryEvents = _eventsByCategory[category]
+                        .Where(e => e.Date >= DateTime.Today && !recommendedEvents.Contains(e))
+                        .Take(2);
+                    
+                    foreach (var evt in categoryEvents)
                     {
-                        var categoryEvents = _eventsByCategory[category]
-                            .Where(e => e.Date >= DateTime.Today && !recommendedEvents.Any(r => r.Id == e.Id))
-                            .Take(3 - recommendedEvents.Count);
-                        recommendedEvents.AddRange(categoryEvents);
-                        
-                        if (recommendedEvents.Count >= 3) break;
+                        recommendedEvents.Add(evt);
+                        if (recommendedEvents.Count >= 6) break;
                     }
                 }
+                if (recommendedEvents.Count >= 6) break;
+            }
+            
+            
+            if (recommendedEvents.Count < 3)
+            {
+                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
             }
             
             return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(6));
@@ -554,36 +547,44 @@ namespace MunicipalityMvc.Core.Services
         {
             if (string.IsNullOrEmpty(_currentUserSession)) return;
             
-            var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
-            var historyArray = _recentSearches.ToArray();
-            var historyJson = JsonSerializer.Serialize(historyArray, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(historyFile, historyJson);
+            try
+            {
+                var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
+                var historyList = _recentSearches.ToList(); // convert stack to listto preserve order
+                var historyJson = JsonSerializer.Serialize(historyList, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(historyFile, historyJson);
+            }
+            catch
+            {
+                // ignore save errors
+            }
         }
-        
         
         private void LoadUserSearchHistory()
         {
             if (string.IsNullOrEmpty(_currentUserSession)) return;
             
-            var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
-            if (File.Exists(historyFile))
+            try
             {
-                try
+                var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
+                if (File.Exists(historyFile))
                 {
                     var historyJson = File.ReadAllText(historyFile);
-                    var historyArray = JsonSerializer.Deserialize<UserSearchHistory[]>(historyJson);
-                    if (historyArray != null)
+                    var historyList = JsonSerializer.Deserialize<List<UserSearchHistory>>(historyJson);
+                    
+                    if (historyList != null && historyList.Any())
                     {
-                        _recentSearches.Clear();
-                        foreach (var search in historyArray.Reverse()) 
+                            //push in reverse order to maintain stack order 
+                        foreach (var search in historyList)
                         {
                             _recentSearches.Push(search);
                         }
                     }
                 }
-                
-                catch
-                { }
+            }
+            catch
+            {
+                // ignore load errors
             }
         }
         
@@ -601,5 +602,5 @@ namespace MunicipalityMvc.Core.Services
             var announcementsJson = JsonSerializer.Serialize(_announcements, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(announcementsFile, announcementsJson);
         }
- }
+    }
 }
