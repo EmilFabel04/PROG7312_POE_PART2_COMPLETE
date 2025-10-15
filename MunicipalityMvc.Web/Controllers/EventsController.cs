@@ -27,9 +27,19 @@ namespace MunicipalityMvc.Web.Controllers
             
             // only show recommendations if user has search history
             var recentSearches = await _eventsService.GetRecentSearchesAsync();
+            
+            // debug
+            Console.WriteLine($"Recent searches count: {recentSearches.Count()}");
+            foreach (var search in recentSearches)
+            {
+                Console.WriteLine($"Search: {search.SearchTerm}, Category: {search.Category}");
+            }
+            
             var recommendedEvents = recentSearches.Any() 
                 ? await _eventsService.GetRecommendedEventsAsync() 
                 : Enumerable.Empty<Event>();
+            
+            Console.WriteLine($"Recommended events count: {recommendedEvents.Count()}");
 
             var viewModel = new EventsIndexViewModel
             {
