@@ -8,7 +8,7 @@ namespace MunicipalityMvc.Web.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private readonly IEventsService _eventsService;
+    private readonly IEventsService _eventsService; // for events and announcements
 
     public HomeController(ILogger<HomeController> logger, IEventsService eventsService)
     {

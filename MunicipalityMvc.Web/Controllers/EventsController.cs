@@ -17,7 +17,7 @@ namespace MunicipalityMvc.Web.Controllers
         // main events page
         public async Task<IActionResult> Index()
         {
-            // set user session for search history
+            // set user session for search history for recommendations
             _eventsService.SetUserSession(HttpContext.Session.Id);
             
             var upcomingEvents = await _eventsService.GetUpcomingEventsAsync();

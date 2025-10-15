@@ -11,24 +11,24 @@ namespace MunicipalityMvc.Core.Services
         private readonly List<Event> _events = new();
         private readonly List<Announcement> _announcements = new();
         
-        // dictionary  category lookups
+        // dictionary for category lookups ,makes searching faster
         private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
-        // sorted dictionary for events by date
+        // sorted dictionary for events by date, keeps them in order
         private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
         
         // hashset for categories
         private readonly HashSet<string> _uniqueCategories = new();
         
-        // queue for announcement processing
+        // queue for announcement processing ,for first in first out
         private readonly Queue<Announcement> _announcementQueue = new();
         
-        // priority queue for high priority announcements
+        // priority queue for high priority announcements, important ones first
         private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
         
-        // stack for user search history
+        // stack for user search history ,last in first out to get recent searches
         private readonly Stack<UserSearchHistory> _recentSearches = new();
         
-        // concurrent dictionary for thread-safe category counts
+        // concurrent dictionary for category counts
         private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
         
       
@@ -41,7 +41,7 @@ namespace MunicipalityMvc.Core.Services
             InitializeDataStructures();
         }
 
-        // clear old data files
+        /*
         private void ClearData()
         {
             var eventsFile = Path.Combine(_dataDirectory, "events.json");
@@ -56,8 +56,8 @@ namespace MunicipalityMvc.Core.Services
                 File.Delete(announcementsFile);
             }
         }
-
-        // load data of json files
+*/
+        // load data from json files
         private void LoadData()
         {
             var eventsFile = Path.Combine(_dataDirectory, "events.json");
@@ -77,7 +77,7 @@ namespace MunicipalityMvc.Core.Services
             }
             else
             {
-                CreateSampleEvents();
+                CreateSampleEvents(); // create some test data if file dosent exist
             }
             if (File.Exists(announcementsFile))
             {
@@ -230,7 +230,7 @@ namespace MunicipalityMvc.Core.Services
             SaveAnnouncements();
         }
 
-        // initialize data structures
+        // initialize data structures by populating all the collections with data
         private void InitializeDataStructures()
         {
             // populate events by category dictionary
