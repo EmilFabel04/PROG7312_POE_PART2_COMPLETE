@@ -11,7 +11,7 @@ namespace MunicipalityMvc.Core.Services
         Task UpdateEventViewCountAsync(Guid eventId);
         
         Task<IEnumerable<Announcement>> GetActiveAnnouncementsAsync();
-        Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority);
+        Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority, DateTime? fromDate = null, DateTime? toDate = null);
         Task<Announcement?> GetAnnouncementByIdAsync(Guid id);
         Task UpdateAnnouncementViewCountAsync(Guid announcementId);
         

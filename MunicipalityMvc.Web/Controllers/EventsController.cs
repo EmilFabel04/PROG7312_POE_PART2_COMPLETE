@@ -84,7 +84,9 @@ namespace MunicipalityMvc.Web.Controllers
             var announcements = await _eventsService.SearchAnnouncementsAsync(
                 searchModel.SearchTerm, 
                 searchModel.Category, 
-                searchModel.Priority);
+                searchModel.Priority,
+                searchModel.FromDate,
+                searchModel.ToDate);
 
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
             var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();

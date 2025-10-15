@@ -331,7 +331,7 @@ namespace MunicipalityMvc.Core.Services
                 (a.ExpiryDate == null || a.ExpiryDate > now)).OrderByDescending(a => a.Date));
         }
         // search announcements
-        public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority)
+        public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var query = _announcements.AsQueryable();
 
@@ -346,6 +346,14 @@ namespace MunicipalityMvc.Core.Services
             if (!string.IsNullOrWhiteSpace(priority))
             {
                 query = query.Where(a => a.Priority == priority);
+            }
+            if (fromDate.HasValue)
+            {
+                query = query.Where(a => a.Date >= fromDate.Value);
+            }
+            if (toDate.HasValue)
+            {
+                query = query.Where(a => a.Date <= toDate.Value);
             }
             return await Task.FromResult(query.OrderByDescending(a => a.Date));
         }
