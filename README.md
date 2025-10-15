@@ -134,11 +134,6 @@ After searching, you get personalized recommendations at the top of the events p
 
 ![Recommendations](docs/part2_recommendations.png)
 
-### Priority Search
-When you select a priority, it only shows announcements (no events).
-
-![Priority Search](docs/part2_priority_search.png)
-
 ## Session Management
 
 I set up sessions in `Program.cs` so each user has their own search history that gets saved.
