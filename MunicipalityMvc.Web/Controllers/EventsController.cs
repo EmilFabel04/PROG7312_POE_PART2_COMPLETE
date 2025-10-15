@@ -24,7 +24,12 @@ namespace MunicipalityMvc.Web.Controllers
             var activeAnnouncements = await _eventsService.GetActiveAnnouncementsAsync();
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
             var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();
-            var recommendedEvents = await _eventsService.GetRecommendedEventsAsync();
+            
+            // only show recommendations if user has search history
+            var recentSearches = await _eventsService.GetRecentSearchesAsync();
+            var recommendedEvents = recentSearches.Any() 
+                ? await _eventsService.GetRecommendedEventsAsync() 
+                : Enumerable.Empty<Event>();
 
             var viewModel = new EventsIndexViewModel
             {
