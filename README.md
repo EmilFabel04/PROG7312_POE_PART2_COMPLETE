@@ -78,7 +78,7 @@ Stores unique categories - automatically removes duplicates. Makes it easy to ge
 private readonly HashSet<string> _uniqueCategories = new();
 ```
 
-![HashSet Implementation](docs/part2_code_hashset.png)
+![HashSet Implementation](docs/part2_code_queue.png)
 
 ## How Recommendations Work
 
