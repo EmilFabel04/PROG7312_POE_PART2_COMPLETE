@@ -155,6 +155,78 @@ namespace MunicipalityMvc.Core.Services
                     Location = "Fire Station",
                     Category = "Education",
                     IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Book Club Meeting",
+                    Description = "Monthly book club discussion at the library",
+                    Date = DateTime.Today.AddDays(5),
+                    Location = "Public Library",
+                    Category = "Culture",
+                    IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Fitness Bootcamp",
+                    Description = "Outdoor fitness training for all skill levels",
+                    Date = DateTime.Today.AddDays(4),
+                    Location = "City Park",
+                    Category = "Sports",
+                    IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Cooking Class",
+                    Description = "Learn to cook healthy meals on a budget",
+                    Date = DateTime.Today.AddDays(12),
+                    Location = "Community Kitchen",
+                    Category = "Education",
+                    IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Music Festival",
+                    Description = "Annual music festival featuring local bands",
+                    Date = DateTime.Today.AddDays(30),
+                    Location = "Waterfront",
+                    Category = "Culture",
+                    IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Job Fair",
+                    Description = "Connect with local employers and explore career opportunities",
+                    Date = DateTime.Today.AddDays(15),
+                    Location = "Convention Center",
+                    Category = "Government",
+                    IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Garden Workshop",
+                    Description = "Tips and tricks for sustainable gardening",
+                    Date = DateTime.Today.AddDays(8),
+                    Location = "Botanical Gardens",
+                    Category = "Education",
+                    IsRecurring = false
+                },
+                new Event
+                {
+                    Title = "Movie Night",
+                    Description = "Free outdoor movie screening for families",
+                    Date = DateTime.Today.AddDays(6),
+                    Location = "Recreation Center",
+                    Category = "Community",
+                    IsRecurring = true
+                },
+                new Event
+                {
+                    Title = "Yoga in the Park",
+                    Description = "Free morning yoga sessions for all ages",
+                    Date = DateTime.Today.AddDays(2),
+                    Location = "Memorial Park",
+                    Category = "Sports",
+                    IsRecurring = true
                 }
             };
 
