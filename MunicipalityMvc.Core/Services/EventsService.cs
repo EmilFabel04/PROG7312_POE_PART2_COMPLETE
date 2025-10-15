@@ -331,7 +331,9 @@ namespace MunicipalityMvc.Core.Services
         {
             var now = DateTime.UtcNow;
             return await Task.FromResult(_announcements.Where(a => a.IsActive && 
-                (a.ExpiryDate == null || a.ExpiryDate > now)).OrderByDescending(a => a.Date));
+                (a.ExpiryDate == null || a.ExpiryDate > now))
+                .OrderBy(a => a.Priority == "High" ? 1 : a.Priority == "Normal" ? 2 : 3)
+                .ThenByDescending(a => a.Date));
         }
         // search announcements
         public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority, DateTime? fromDate = null, DateTime? toDate = null)
@@ -358,7 +360,9 @@ namespace MunicipalityMvc.Core.Services
             {
                 query = query.Where(a => a.Date <= toDate.Value);
             }
-            return await Task.FromResult(query.OrderByDescending(a => a.Date));
+            return await Task.FromResult(query
+                .OrderBy(a => a.Priority == "High" ? 1 : a.Priority == "Normal" ? 2 : 3)
+                .ThenByDescending(a => a.Date));
         }
 
         // kry announcement by id
