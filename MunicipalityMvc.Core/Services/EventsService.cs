@@ -34,9 +34,6 @@ namespace MunicipalityMvc.Core.Services
         {
             _dataDirectory = dataDirectory;
             Directory.CreateDirectory(_dataDirectory);
-            
-            // clear old data and recreate with new
-            ClearData();
             LoadData();
             InitializeDataStructures();
         }
