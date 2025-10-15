@@ -543,47 +543,42 @@ namespace MunicipalityMvc.Core.Services
                 return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
             }
             
-            var recommendedEvents = new HashSet<Event>(); // use hashset to avoid duplicates
+            var recommendedEvents = new List<Event>(); //use list to maintain order
+            var addedEventIds = new HashSet<Guid>(); //track which events we've added
             
-            // use stack to get most recent searches 
+            // use stack to get most recent searches
             var recentSearches = _recentSearches.ToArray().Take(3);
+            
             
             foreach (var search in recentSearches)
             {
-                // recommend events from same category
-                if (!string.IsNullOrEmpty(search.Category))
-                {
-                    var categoryMatches = upcomingEvents
-                        .Where(e => e.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase))
-                        .Take(2);
-                    
-                    foreach (var evt in categoryMatches)
-                    {
-                        recommendedEvents.Add(evt);
-                    }
-                }
-                
-                // recommend events with similar keywords in title
+                Event? matchedEvent = null;
+            
                 if (!string.IsNullOrEmpty(search.SearchTerm))
                 {
-                    var titleMatches = upcomingEvents
-                        .Where(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
-                        .Take(2);
-                    
-                    foreach (var evt in titleMatches)
-                    {
-                        recommendedEvents.Add(evt);
-                    }
+                    matchedEvent = upcomingEvents
+                        .FirstOrDefault(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase) 
+                                          && !addedEventIds.Contains(e.Id));
+                }
+                
+                if (matchedEvent == null && !string.IsNullOrEmpty(search.Category))
+                {
+                    matchedEvent = upcomingEvents
+                        .FirstOrDefault(e => e.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase) 
+                                          && !addedEventIds.Contains(e.Id));
+                }
+                if (matchedEvent != null)
+                {
+                    recommendedEvents.Add(matchedEvent);
+                    addedEventIds.Add(matchedEvent.Id);
                 }
             }
             
-            // if we have enough recommendations return them
-            if (recommendedEvents.Count >= 3)
+            if (recommendedEvents.Count > 0)
             {
-                return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(6));
+                return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(3));
             }
             
-            // otherwise fill with events from popular categories
             var popularCategories = _categorySearchCounts
                 .OrderByDescending(x => x.Value)
                 .Select(x => x.Key)
@@ -593,26 +588,24 @@ namespace MunicipalityMvc.Core.Services
             {
                 if (_eventsByCategory.ContainsKey(category))
                 {
-                    var categoryEvents = _eventsByCategory[category]
-                        .Where(e => e.Date >= DateTime.Today && !recommendedEvents.Contains(e))
-                        .Take(2);
+                    var categoryEvent = _eventsByCategory[category]
+                        .FirstOrDefault(e => e.Date >= DateTime.Today && !addedEventIds.Contains(e.Id));
                     
-                    foreach (var evt in categoryEvents)
+                    if (categoryEvent != null)
                     {
-                        recommendedEvents.Add(evt);
-                        if (recommendedEvents.Count >= 6) break;
+                        recommendedEvents.Add(categoryEvent);
+                        addedEventIds.Add(categoryEvent.Id);
+                        if (recommendedEvents.Count >= 3) break;
                     }
                 }
-                if (recommendedEvents.Count >= 6) break;
             }
             
-            
-            if (recommendedEvents.Count < 3)
+            if (recommendedEvents.Count == 0)
             {
-                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
+                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(3));
             }
             
-            return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(6));
+            return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(3));
         }
        
         private void SaveUserSearchHistory()
