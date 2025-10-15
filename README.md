@@ -47,6 +47,7 @@ All Reports (Public list)
 - **Recommendations**: Shows events based on what you searched before
 - **Session Tracking**: Remembers what you searched across browser sessions
 - **Priority Ordering**: Important announcements show first (High → Normal → Low)
+- **Visual Enhancements**: Color-coded cards (blue for recommendations, green for events, priority-based colors for announcements)
 
 ### Data Structures I Used
 - **Stack**: Keeps track of recent searches (last in, first out)
