@@ -16,14 +16,8 @@ public class HomeController : Controller
         _eventsService = eventsService;
     }
 
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var upcomingEvents = await _eventsService.GetUpcomingEventsAsync();
-        var activeAnnouncements = await _eventsService.GetActiveAnnouncementsAsync();
-        
-        ViewBag.RecentEvents = upcomingEvents.Take(3);
-        ViewBag.RecentAnnouncements = activeAnnouncements.Take(3);
-        
         return View();
     }
 
