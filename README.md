@@ -1,7 +1,7 @@
 # Municipal Services Part 2 - Local Events & Announcements
 **Student**: ST10359034  
 **Module**: PROG7312  
-**Year**: 2024
+**Year**: 2025
 
 ## Overview
 
@@ -15,7 +15,7 @@ This is my Part 2 project where I added a local events and announcements feature
 - See important announcements first
 - Color-coded cards to make things easier to see
 
-## The 7 Data Structures I Used
+## The 7 Data Structures
 
 ### 1. Stack
 I used a Stack to keep track of recent searches. It works like a stack of plates - the last search you do goes on top, and that's the first one we look at for recommendations.
