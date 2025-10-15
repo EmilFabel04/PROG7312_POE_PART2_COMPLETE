@@ -438,33 +438,54 @@ namespace MunicipalityMvc.Core.Services
                 .Take(5));
         }
         
-        // recommendation algorithm based on search history
+        // recommendation algorithm based on search history using stack
         public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
         {
-            // get most searched categories
-            var popularCategories = _categorySearchCounts
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .Take(3)
-                .ToList();
-            
-            if (!popularCategories.Any())
+            if (_recentSearches.Count == 0)
             {
                 // if no search history, return upcoming events
                 return await GetUpcomingEventsAsync();
             }
-            // find events in popular categories
+            
             var recommendedEvents = new List<Event>();
-            foreach (var category in popularCategories)
+            
+            // use stack to get most recent searches 
+            var recentSearches = _recentSearches.ToArray().Take(5); // get last 5 searches
+            
+            foreach (var search in recentSearches)
             {
-                if (_eventsByCategory.ContainsKey(category))
+                // find events matching recent search terms or categories
+                var matchingEvents = _events.Where(e => 
+                    e.Date >= DateTime.Today && (
+                        (!string.IsNullOrEmpty(search.SearchTerm) && 
+                         (e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase) || 
+                          e.Description.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))) ||
+                        (!string.IsNullOrEmpty(search.Category) && e.Category == search.Category)
+                    )).Take(2);
+                
+                recommendedEvents.AddRange(matchingEvents);
+            }
+            
+            // if no matches from recent searches
+            if (!recommendedEvents.Any())
+            {
+                var popularCategories = _categorySearchCounts
+                    .OrderByDescending(x => x.Value)
+                    .Select(x => x.Key)
+                    .Take(3);
+                
+                foreach (var category in popularCategories)
                 {
-                 recommendedEvents.AddRange(_eventsByCategory[category]
-                        .Where(e => e.Date >= DateTime.Today)
-                        .Take(3));
+                    if (_eventsByCategory.ContainsKey(category))
+                    {
+                        recommendedEvents.AddRange(_eventsByCategory[category]
+                            .Where(e => e.Date >= DateTime.Today)
+                            .Take(2));
+                    }
                 }
             }
-            return await Task.FromResult(recommendedEvents.Distinct().OrderBy(e => e.Date));
+            
+            return await Task.FromResult(recommendedEvents.Distinct().OrderBy(e => e.Date).Take(6));
         }
         // save events
         private void SaveEvents()

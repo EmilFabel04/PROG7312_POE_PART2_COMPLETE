@@ -69,9 +69,9 @@ namespace MunicipalityMvc.Web.Controllers
             }
 
             // record search for recommendations
-            if (!string.IsNullOrEmpty(searchModel.SearchTerm))
+            if (!string.IsNullOrEmpty(searchModel.SearchTerm) || !string.IsNullOrEmpty(searchModel.Category))
             {
-                await _eventsService.RecordSearchAsync(searchModel.SearchTerm, searchModel.Category);
+                await _eventsService.RecordSearchAsync(searchModel.SearchTerm ?? "", searchModel.Category);
             }
 
             // search events and announcements
