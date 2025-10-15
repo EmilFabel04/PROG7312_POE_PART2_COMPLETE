@@ -1,6 +1,6 @@
 # ST10359034 - Municipal Services — Citizen Engagement (ASP.NET Core MVC, .NET 8)
 
-This is my Part 2 implementation building on Part 1. I added a comprehensive events and announcements system with advanced data structures, smart recommendations, and session-based user tracking. The app now includes both issue reporting and local events/announcements functionality.
+This is my Part 2 implementation that builds on Part 1. I added an events and announcements system with some data structures we learned about, recommendations based on what users search for, and keeping track of user sessions. Now the app has both issue reporting and local events/announcements.
 
 ## Contents
 - Overview
@@ -20,7 +20,7 @@ This is my Part 2 implementation building on Part 1. I added a comprehensive eve
 ## Overview
 Residents can submit issues with location, category, description, and multiple attachments. The app stores tickets in a queue (FIFO) and displays the submitter's queue position on the success screen. An optional name/surname and contact details can be provided along with update preferences (email/SMS). The UI is responsive and polished.
 
-**NEW in Part 2:** Residents can now browse local events and announcements, search by category and date, and receive personalized recommendations based on their search history. The system uses advanced data structures for efficient data organization and retrieval.
+**NEW in Part 2:** Residents can now look at local events and announcements, search by category and date, and get suggestions based on what they searched before. I used some of the data structures we learned about to organize the data better.
 
 ### Key Screens
 Home (Main menu)
@@ -41,37 +41,37 @@ All Reports (Public list)
 
 ## Part 2 Features (Events & Announcements)
 
-### New Functionality
-- **Events & Announcements Page**: Browse upcoming events and active announcements
-- **Advanced Search**: Filter by search term, category, priority, and date range
-- **Smart Recommendations**: Personalized event suggestions based on user search history
-- **Session Tracking**: User preferences remembered across browser sessions
-- **Priority Ordering**: Announcements displayed High → Normal → Low priority
+### What I Added
+- **Events & Announcements Page**: People can look at upcoming events and announcements
+- **Search**: Filter by search term, category, priority, and date range
+- **Recommendations**: Shows events based on what you searched before
+- **Session Tracking**: Remembers what you searched across browser sessions
+- **Priority Ordering**: Important announcements show first (High → Normal → Low)
 
-### Advanced Data Structures Used
-- **Stack**: User search history (LIFO) for recent search tracking
-- **Queue**: Announcement processing (FIFO) for fair handling
-- **Priority Queue**: High-priority announcements processed first
-- **Dictionary**: Category-based event lookups for fast searching
-- **Sorted Dictionary**: Events automatically sorted by date
-- **Concurrent Dictionary**: Thread-safe category popularity tracking
-- **HashSet**: Unique category storage with no duplicates
+### Data Structures I Used
+- **Stack**: Keeps track of recent searches (last in, first out)
+- **Queue**: Processes announcements in order (first in, first out)
+- **Priority Queue**: Important announcements get processed first
+- **Dictionary**: Fast lookups by category
+- **Sorted Dictionary**: Events stay sorted by date automatically
+- **Concurrent Dictionary**: Safe for multiple users searching at same time
+- **HashSet**: Stores unique categories without duplicates
 
 ### Key Screens (Part 2)
-Events & Announcements Main Page
+**Events & Announcements Main Page**
 - Shows upcoming events and active announcements
-- Search form with multiple filters
-- "Recommended for You" section with personalized suggestions
+- Search form with different filters
+- "Recommended for You" section with suggestions
 
-Search Results
-- Displays filtered events and announcements
-- Clean, organized results layout
-- Easy navigation back to main page
+**Search Results**
+- Shows filtered events and announcements
+- Clean layout for results
+- Easy way to go back to main page
 
-Event/Announcement Details
-- Individual detail pages for each event and announcement
-- Complete information display
-- Back navigation to main events page
+**Event/Announcement Details**
+- Individual pages for each event and announcement
+- Shows all the information
+- Back button to main events page
 
 ## Requirements Matrix
 
@@ -85,147 +85,92 @@ Event/Announcement Details
 - Privacy in public list: only ticket, category, description; no contact/location: `Views/Reports/Index.cshtml`.
 
 ### Part 2 Requirements (Events & Announcements)
-- **Local Events and Announcements Page**: Implemented in `Views/Events/Index.cshtml` with comprehensive event and announcement display.
-- **Advanced Data Structures (40 Marks)**:
-  - **Stacks, Queues, Priority Queues (15 Marks)**: Stack for search history, Queue for announcements, PriorityQueue for priority handling in `EventsService.cs`.
-  - **Hash Tables, Dictionaries, Sorted Dictionaries (15 Marks)**: Dictionary for category lookups, SortedDictionary for date ordering, ConcurrentDictionary for thread-safe operations in `EventsService.cs`.
-  - **Sets (10 Marks)**: HashSet for unique categories in `EventsService.cs`.
-- **Additional Recommendation Feature (30 Marks)**: Smart recommendation algorithm using search history and popular categories in `EventsService.cs`.
-- **Search Functionality**: Filter by term, category, priority, and date range in `EventsController.cs`.
-- **Session Management**: User session tracking for personalized recommendations in `Program.cs` and `EventsController.cs`.
+- **Local Events and Announcements Page**: Made in `Views/Events/Index.cshtml` to show events and announcements.
+- **Data Structures (40 Marks)**:
+  - **Stacks, Queues, Priority Queues (15 Marks)**: Used Stack for search history, Queue for announcements, PriorityQueue for handling priorities in `EventsService.cs`.
+  - **Hash Tables, Dictionaries, Sorted Dictionaries (15 Marks)**: Used Dictionary for category lookups, SortedDictionary for date ordering, ConcurrentDictionary for safe operations in `EventsService.cs`.
+  - **Sets (10 Marks)**: Used HashSet for unique categories in `EventsService.cs`.
+- **Recommendation Feature (30 Marks)**: Made recommendations using search history and popular categories in `EventsService.cs`.
+- **Search Functionality**: Can filter by term, category, priority, and date range in `EventsController.cs`.
+- **Session Management**: Tracks user sessions for recommendations in `Program.cs` and `EventsController.cs`.
 
-## Advanced Data Structures Implementation
+## How I Used the Data Structures
 
 ### Stack (User Search History)
-```csharp
-private readonly Stack<UserSearchHistory> _recentSearches = new();
-```
-- **Purpose**: LIFO (Last In, First Out) for tracking recent user searches
-- **Usage**: Most recent searches are prioritized for recommendations
-- **Implementation**: `RecordSearchAsync()` pushes searches, `GetRecommendedEventsAsync()` uses recent searches
+- **What it does**: Keeps track of recent searches (last in, first out)
+- **Why I used it**: So the most recent searches get priority for recommendations
+- **How it works**: When someone searches, it gets added to the top of the stack
 
 ### Queue (Announcement Processing)
-```csharp
-private readonly Queue<Announcement> _announcementQueue = new();
-```
-- **Purpose**: FIFO (First In, First Out) for fair announcement processing
-- **Usage**: Ensures announcements are processed in order received
-- **Implementation**: `InitializeDataStructures()` enqueues active announcements
+- **What it does**: Processes announcements in order (first in, first out)
+- **Why I used it**: Makes sure announcements are handled fairly in the order they come in
+- **How it works**: New announcements go to the back, old ones get processed first
 
 ### Priority Queue (High Priority Announcements)
-```csharp
-private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
-```
-- **Purpose**: High-priority announcements processed first
-- **Usage**: Priority 1 (High), 2 (Normal), 3 (Low)
-- **Implementation**: Priority-based enqueueing in `InitializeDataStructures()`
+- **What it does**: Important announcements get processed first
+- **Why I used it**: High priority announcements should show before normal ones
+- **How it works**: Priority 1 (High), 2 (Normal), 3 (Low) - lower numbers go first
 
 ### Dictionary (Category Lookups)
-```csharp
-private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
-```
-- **Purpose**: O(1) category-based event retrieval
-- **Usage**: Fast filtering by category in search operations
-- **Implementation**: Populated in `InitializeDataStructures()`, used in search methods
+- **What it does**: Fast lookups by category
+- **Why I used it**: Makes searching by category much faster
+- **How it works**: Each category points to a list of events in that category
 
 ### Sorted Dictionary (Date Ordering)
-```csharp
-private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
-```
-- **Purpose**: Automatic chronological ordering of events
-- **Usage**: Events always displayed in date order
-- **Implementation**: Date-based key organization in `InitializeDataStructures()`
+- **What it does**: Keeps events sorted by date automatically
+- **Why I used it**: Events should always show in date order
+- **How it works**: Uses the date as the key so it stays sorted
 
-### Concurrent Dictionary (Thread-Safe Category Counts)
-```csharp
-private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
-```
-- **Purpose**: Thread-safe tracking of category popularity
-- **Usage**: Multiple users can search simultaneously without conflicts
-- **Implementation**: `AddOrUpdate()` for atomic operations in `RecordSearchAsync()`
+### Concurrent Dictionary (Category Counts)
+- **What it does**: Tracks how popular each category is
+- **Why I used it**: Safe for multiple users searching at the same time
+- **How it works**: Counts how many times each category gets searched
 
 ### HashSet (Unique Categories)
-```csharp
-private readonly HashSet<string> _uniqueCategories = new();
-```
-- **Purpose**: Efficient storage of unique category names
-- **Usage**: No duplicate categories, O(1) operations
-- **Implementation**: Automatic uniqueness in `InitializeDataStructures()`
+- **What it does**: Stores unique category names
+- **Why I used it**: No duplicate categories, fast operations
+- **How it works**: Automatically removes duplicates when adding categories
 
-## Recommendation Algorithm
+## How the Recommendation System Works
+
+### The Basic Idea
+The recommendation system looks at what you searched before and what categories are popular to suggest events you might like.
 
 ### How It Works
-The recommendation system uses a combination of user search history and popular categories to suggest relevant events:
-
-1. **Search History Tracking**: Every search is recorded using a Stack (LIFO) to prioritize recent searches
-2. **Category Popularity**: ConcurrentDictionary tracks how often each category is searched
-3. **Smart Matching**: Algorithm matches recent search terms and categories to find relevant events
-4. **Fallback Strategy**: If no recent searches match, uses popular categories as recommendations
-
-### Implementation Details
-```csharp
-// Record user searches
-public async Task RecordSearchAsync(string searchTerm, string? category = null)
-{
-    var search = new UserSearchHistory { SearchTerm = searchTerm, Category = category };
-    _recentSearches.Push(search); // Stack for LIFO
-    _categorySearchCounts.AddOrUpdate(category, 1, (key, value) => value + 1); // Thread-safe counting
-}
-
-// Generate recommendations
-public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
-{
-    // Use recent searches first (Stack LIFO)
-    var recentSearches = _recentSearches.ToArray().Take(5);
-    
-    // Match events based on recent search terms and categories
-    foreach (var search in recentSearches)
-    {
-        var matchingEvents = _events.Where(e => 
-            e.Title.Contains(search.SearchTerm) || 
-            e.Category == search.Category);
-        recommendedEvents.AddRange(matchingEvents);
-    }
-    
-    // Fallback to popular categories if no matches
-    if (!recommendedEvents.Any())
-    {
-        var popularCategories = _categorySearchCounts.OrderByDescending(x => x.Value);
-        // Use popular categories for recommendations
-    }
-}
-```
+1. **Tracks Your Searches**: Every time you search, it remembers what you looked for using a Stack (most recent first)
+2. **Counts Popular Categories**: Keeps track of how often each category gets searched
+3. **Finds Matches**: Looks for events that match your recent searches or categories
+4. **Fallback**: If nothing matches your recent searches, it shows popular categories
 
 ### Session Persistence
-- User search history is saved to JSON files per session ID
-- Recommendations persist across browser sessions
-- Each user gets personalized suggestions based on their search patterns
+- Your search history gets saved to files so it remembers across browser sessions
+- Each user gets their own personalized suggestions
+- The system learns what you like based on what you search for
 
 ## Tech Stack & Architecture
-- .NET 8, ASP.NET Core MVC (no external NuGet packages required beyond shared framework).
-- Project `MunicipalityMvc.Core`: domain models (`IssueReport`), service contract (`IIssueService`), and implementation (`IssueService`).
-- Project `MunicipalityMvc.Web`: MVC app; controllers, views, `Program.cs` DI configuration.
-- Dependency Injection: `Program.cs` registers `IIssueService` as a singleton, persisting data under `AppData/data`.
+- .NET 8, ASP.NET Core MVC (no extra packages needed beyond what comes with .NET)
+- Project `MunicipalityMvc.Core`: has the models and services
+- Project `MunicipalityMvc.Web`: has the controllers, views, and main app setup
+- Dependency Injection: `Program.cs` sets up the services and saves data to `AppData/data`
 
 ## Projects and Layout
 - `MunicipalityMvc.Core`
-  - `Models/IssueReport.cs`: ticket fields; includes optional `FirstName`, `LastName`, `Email`, `Phone`, and `WantsEmailUpdates`, `WantsSmsUpdates`.
-  - `Models/Event.cs`: event model with title, description, date, location, category, and recurring flag.
-  - `Models/Announcement.cs`: announcement model with title, description, date, expiry, category, priority, and active status.
-  - `Models/UserSearchHistory.cs`: tracks user search terms, categories, and timestamps for recommendations.
-  - `Services/IIssueService.cs`, `Services/IssueService.cs`: queue-based storage, JSON persistence, attachment handling, queue position.
-  - `Services/IEventsService.cs`, `Services/EventsService.cs`: events and announcements management with advanced data structures and recommendation algorithm.
+  - `Models/IssueReport.cs`: stores issue ticket information
+  - `Models/Event.cs`: stores event information like title, date, location, etc.
+  - `Models/Announcement.cs`: stores announcement information with priority levels
+  - `Models/UserSearchHistory.cs`: tracks what users search for recommendations
+  - `Services/IIssueService.cs`, `Services/IssueService.cs`: handles issue reporting with queue
+  - `Services/IEventsService.cs`, `Services/EventsService.cs`: handles events and announcements with data structures
 - `MunicipalityMvc.Web`
-  - `Controllers/ReportsController.cs`: Create, Success, and Index actions.
-  - `Controllers/EventsController.cs`: Events and announcements display, search, and recommendation handling.
-  - `Controllers/HomeController.cs`: Main menu and navigation.
-  - `Views/Reports/{Create,Success,Index}.cshtml`: Issue reporting UI pages.
-  - `Views/Events/{Index,SearchResults,EventDetails,AnnouncementDetails}.cshtml`: Events and announcements UI pages.
-  - `Views/Home/Index.cshtml`: Main menu with navigation to all features.
-  - `Views/Shared/_Layout.cshtml`: global layout, toast container helpers.
-  - `wwwroot/css/site.css`: theme/branding.
-  - `AppData/data/`: issues.json and per-ticket attachment folders (created at runtime).
-  - `AppData/`: events.json, announcements.json, and user search history files (created at runtime).
+  - `Controllers/ReportsController.cs`: handles issue reporting pages
+  - `Controllers/EventsController.cs`: handles events and announcements pages
+  - `Controllers/HomeController.cs`: handles main menu
+  - `Views/Reports/`: issue reporting UI pages
+  - `Views/Events/`: events and announcements UI pages
+  - `Views/Home/Index.cshtml`: main menu page
+  - `Views/Shared/_Layout.cshtml`: main layout template
+  - `wwwroot/css/site.css`: styling
+  - `AppData/`: where all the JSON files are stored (issues, events, announcements, search history)
 
 ## How To Run
 ### Visual Studio 2022
@@ -292,17 +237,17 @@ The app will open at `http://localhost:<port>`.
 7. Home → "View All Reports" lists tickets (ticket/category/description only).
 
 ### Part 2: Events & Announcements
-1. Home → click "Local Events & Announcements".
-2. Browse upcoming events and active announcements on the main page.
+1. Home → click "Local Events & Announcements"
+2. Look at upcoming events and announcements on the main page
 3. Use the search form to filter by:
    - Search term (title/description)
    - Category (Sports, Community, etc.)
    - Priority (High, Normal, Low for announcements)
    - Date range (From Date and To Date)
-4. Click "Search" to see filtered results.
-5. Click on any event or announcement title to view full details.
-6. The "Recommended for You" section shows personalized suggestions based on your search history.
-7. Your search preferences are remembered across browser sessions for better recommendations.
+4. Click "Search" to see results
+5. Click on any event or announcement title to see full details
+6. The "Recommended for You" section shows suggestions based on what you searched before
+7. Your search history is remembered across browser sessions
 
 ## Feature Walkthrough (with screenshots)
 Below are the key features, each paired with a screenshot placeholder you can replace.
@@ -346,11 +291,11 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - Contact info & preferences: Optional `FirstName`, `LastName`, `Email`, `Phone`, plus `WantsEmailUpdates` and `WantsSmsUpdates` are stored per ticket for future parts (e.g., sending updates).
 
 ### Part 2: Events & Announcements
-- Events storage: `EventsService` maintains in-memory collections with JSON persistence to `events.json`.
-- Announcements storage: Similar JSON persistence to `announcements.json`.
-- User search history: Individual JSON files per session ID (`search_history_<sessionId>.json`) for personalized recommendations.
-- Advanced data structures: All collections (Stack, Queue, PriorityQueue, Dictionary, SortedDictionary, ConcurrentDictionary, HashSet) are maintained in memory and synchronized with JSON files.
-- Session management: User sessions tracked via `HttpContext.Session.Id` for recommendation personalization.
+- Events storage: `EventsService` keeps events in memory and saves to `events.json`
+- Announcements storage: Similar setup with `announcements.json`
+- User search history: Each user gets their own file (`search_history_<sessionId>.json`) for recommendations
+- Data structures: All the collections (Stack, Queue, etc.) are kept in memory and saved to JSON files
+- Session management: Tracks users by session ID for personalized recommendations
 
 ### General
 - No database server required; runs offline.
@@ -366,12 +311,12 @@ Below are the key features, each paired with a screenshot placeholder you can re
 5) The public list reads the whole queue as a summary.
 
 #### Part 2: Events & Announcements
-1) `EventsController.Index` loads events and announcements from JSON files into advanced data structures.
-2) User searches are recorded via `EventsController.Search` → `EventsService.RecordSearchAsync`.
-3) Search history is pushed to Stack and category counts updated in ConcurrentDictionary.
-4) Recommendations generated using recent searches (Stack LIFO) and popular categories.
-5) All data structures synchronized with JSON files for persistence.
-6) Session-based user tracking maintains personalized recommendations across visits.
+1) `EventsController.Index` loads events and announcements from JSON files into the data structures
+2) When users search, `EventsController.Search` calls `EventsService.RecordSearchAsync`
+3) Search history gets added to Stack and category counts get updated
+4) Recommendations are made using recent searches and popular categories
+5) All data structures are saved to JSON files so they persist
+6) User sessions are tracked so recommendations work across visits
 
 ![Data Folder – issues.json and ticket folders](docs/05_data_folder.png)
 
@@ -383,11 +328,11 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - Success feedback: one-time toast and optional browser notification (permission‑based) personalized with the submitter's name.
 
 ### Part 2: Events & Announcements
-- Smart recommendations: Smart suggestions based on user search history and popular categories.
-- Session persistence: User preferences and search history remembered across browser sessions.
-- Advanced search: Multiple filter options (term, category, priority, date range) for precise results.
-- Priority ordering: Important announcements displayed first (High → Normal → Low).
-- Real-time search: Instant filtering and results display.
+- Recommendations: Shows events based on what you searched before and popular categories
+- Session persistence: Remembers your search history across browser sessions
+- Search: Multiple filter options (term, category, priority, date range) for finding what you want
+- Priority ordering: Important announcements show first (High → Normal → Low)
+- Real-time search: Results show up right away when you search
 
 ### General
 - Keyboard navigation and labels for inputs; responsive design.
@@ -401,10 +346,10 @@ Below are the key features, each paired with a screenshot placeholder you can re
 - Files are stored locally; no external uploads.
 
 ### Part 2: Events & Announcements
-- User search history is stored locally per session ID; no cross-user data sharing.
-- Session data is temporary and expires after 30 minutes of inactivity.
-- Search history files are created locally and not transmitted externally.
-- All event and announcement data is public information; no privacy concerns.
+- Your search history is stored locally per session; no sharing between users
+- Session data expires after 30 minutes of inactivity
+- Search history files are created locally and not sent anywhere
+- All event and announcement data is public information
 
 ### General
 - All data stored locally in JSON files; no external database connections.
