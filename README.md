@@ -3,6 +3,9 @@
 **Module**: PROG7312  
 **Year**: 2025
 
+## GITHUB REPO LINK:
+https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
+
 ## Overview
 
 This is my Part 2 project where I added a local events and announcements feature to the municipal services app. Users can see upcoming events, search for things, and get recommendations based on what they searched for before.
