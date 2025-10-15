@@ -400,11 +400,11 @@ namespace MunicipalityMvc.Core.Services
       
         public void SetUserSession(string sessionId)
         {
-            // only load if switching users
-            if (_currentUserSession != sessionId)
+            _currentUserSession = sessionId;
+            
+            // always load search history if stack is empty
+            if (_recentSearches.Count == 0)
             {
-                _currentUserSession = sessionId;
-                _recentSearches.Clear();
                 LoadUserSearchHistory();
             }
         }
@@ -545,12 +545,10 @@ namespace MunicipalityMvc.Core.Services
        
         private void SaveUserSearchHistory()
         {
-            if (string.IsNullOrEmpty(_currentUserSession)) return;
-            
             try
             {
-                var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
-                var historyList = _recentSearches.ToList(); // convert stack to listto preserve order
+                var historyFile = Path.Combine(_dataDirectory, "search_history.json");
+                var historyList = _recentSearches.ToList(); // convert stack to list to preserve order
                 var historyJson = JsonSerializer.Serialize(historyList, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(historyFile, historyJson);
             }
@@ -562,11 +560,9 @@ namespace MunicipalityMvc.Core.Services
         
         private void LoadUserSearchHistory()
         {
-            if (string.IsNullOrEmpty(_currentUserSession)) return;
-            
             try
             {
-                var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
+                var historyFile = Path.Combine(_dataDirectory, "search_history.json");
                 if (File.Exists(historyFile))
                 {
                     var historyJson = File.ReadAllText(historyFile);
@@ -574,10 +570,10 @@ namespace MunicipalityMvc.Core.Services
                     
                     if (historyList != null && historyList.Any())
                     {
-                            //push in reverse order to maintain stack order 
-                        foreach (var search in historyList)
+                        // push in reverse order to maintain stack order 
+                        for (int i = historyList.Count - 1; i >= 0; i--)
                         {
-                            _recentSearches.Push(search);
+                            _recentSearches.Push(historyList[i]);
                         }
                     }
                 }
