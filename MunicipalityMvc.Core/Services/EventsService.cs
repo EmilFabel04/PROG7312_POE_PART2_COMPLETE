@@ -465,26 +465,68 @@ namespace MunicipalityMvc.Core.Services
             }
             
             var recommendedEvents = new List<Event>();
+            var scoredEvents = new Dictionary<Guid, int>(); 
             
-            // use stack to get most recent searches 
-            var recentSearches = _recentSearches.ToArray().Take(5); // get last 5 searches
+            // use stack to get most recent searches
+            var recentSearches = _recentSearches.ToArray().Take(5);
+            
             
             foreach (var search in recentSearches)
             {
-                // find events matching recent search terms or categories
-                var matchingEvents = _events.Where(e => 
-                    e.Date >= DateTime.Today && (
-                        (!string.IsNullOrEmpty(search.SearchTerm) && 
-                         (e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase) || 
-                          e.Description.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))) ||
-                        (!string.IsNullOrEmpty(search.Category) && e.Category == search.Category)
-                    )).Take(2);
+                // find events matching recent search patterns
+                var matchingEvents = _events.Where(e => e.Date >= DateTime.Today);
                 
-                recommendedEvents.AddRange(matchingEvents);
+                foreach (var evt in matchingEvents)
+                {
+                    int score = 0;
+                    
+                    // score based on categorymatch
+                    if (!string.IsNullOrEmpty(search.Category) && evt.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase))
+                    {
+                        score += 10;
+                    }
+                    
+                    // score based on search term relevance
+                    if (!string.IsNullOrEmpty(search.SearchTerm))
+                    {
+                        if (evt.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                        {
+                            score += 8;
+                        }
+                        if (evt.Description.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase))
+                        {
+                            score += 5;
+                        }
+                    }
+                    
+                    // add or update event score
+                    if (score > 0)
+                    {
+                        if (scoredEvents.ContainsKey(evt.Id))
+                        {
+                            scoredEvents[evt.Id] += score;
+                        }
+                        else
+                        {
+                            scoredEvents[evt.Id] = score;
+                        }
+                    }
+                }
             }
             
-            // if no matches from recent searches
-            if (!recommendedEvents.Any())
+           
+            var topEventIds = scoredEvents
+                .OrderByDescending(x => x.Value)
+                .Select(x => x.Key)
+                .Take(6);
+            
+            recommendedEvents = _events
+                .Where(e => topEventIds.Contains(e.Id))
+                .OrderBy(e => e.Date)
+                .ToList();
+            
+            // if not enough recommendations, use popular categories from concurrent dictionary
+            if (recommendedEvents.Count < 3)
             {
                 var popularCategories = _categorySearchCounts
                     .OrderByDescending(x => x.Value)
@@ -495,14 +537,17 @@ namespace MunicipalityMvc.Core.Services
                 {
                     if (_eventsByCategory.ContainsKey(category))
                     {
-                        recommendedEvents.AddRange(_eventsByCategory[category]
-                            .Where(e => e.Date >= DateTime.Today)
-                            .Take(2));
+                        var categoryEvents = _eventsByCategory[category]
+                            .Where(e => e.Date >= DateTime.Today && !recommendedEvents.Any(r => r.Id == e.Id))
+                            .Take(3 - recommendedEvents.Count);
+                        recommendedEvents.AddRange(categoryEvents);
+                        
+                        if (recommendedEvents.Count >= 3) break;
                     }
                 }
             }
             
-            return await Task.FromResult(recommendedEvents.Distinct().OrderBy(e => e.Date).Take(6));
+            return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(6));
         }
        
         private void SaveUserSearchHistory()
