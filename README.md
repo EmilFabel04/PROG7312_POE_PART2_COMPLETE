@@ -109,8 +109,9 @@ Built with:
 
 ### In Visual Studio 2022:
 1. Open the `.sln` file
-2. Press F5
-3. Browser opens automatically
+2. Delete old AppData .json files if present
+3. Press F5
+4. Browser opens automatically
 
 ### From Command Line:
 ```bash
