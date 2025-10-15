@@ -184,8 +184,6 @@ Everything is saved as JSON files in the AppData folder:
 ### Tutorials & Learning Resources
 - W3Schools C#: https://www.w3schools.com/cs/
 - W3Schools ASP.NET: https://www.w3schools.com/asp/
-- W3Schools Bootstrap: https://www.w3schools.com/bootstrap5/
-- Bootstrap 5 Docs: https://getbootstrap.com/docs/5.3/
 - GeeksforGeeks Data Structures in C#: https://www.geeksforgeeks.org/data-structures-in-c-sharp/
 - TutorialsTeacher LINQ: https://www.tutorialsteacher.com/linq
 
