@@ -16,20 +16,19 @@ namespace MunicipalityMvc.Core.Services
         // sorted dictionary for events by date, keeps them in order
         private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
         
-        // hashset for categories
-        private readonly HashSet<string> _uniqueCategories = new();
+        private readonly HashSet<string> _uniqueCategories = new(); // hashset for categories
         
-        // queue for announcement processing ,for first in first out
+        // queue for announcement processing 
         private readonly Queue<Announcement> _announcementQueue = new();
         
-        // priority queue for high priority announcements, important ones first
+        // priority queue for high priority announcements
         private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
         
-        // stack for user search history ,last in first out to get recent searches
-        private readonly Stack<UserSearchHistory> _recentSearches = new();
+        private readonly Stack<UserSearchHistory> _recentSearches = new(); // stack for user search history lifo
         
         // concurrent dictionary for category counts
         private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
+        
         private string? _currentUserSession;
         
         public EventsService(string dataDirectory)
@@ -40,22 +39,6 @@ namespace MunicipalityMvc.Core.Services
             InitializeDataStructures();
         }
 
-        /*
-        private void ClearData()
-        {
-            var eventsFile = Path.Combine(_dataDirectory, "events.json");
-            var announcementsFile = Path.Combine(_dataDirectory, "announcements.json");
-            
-            if (File.Exists(eventsFile))
-            {
-                File.Delete(eventsFile);
-            }
-            if (File.Exists(announcementsFile))
-            {
-                File.Delete(announcementsFile);
-            }
-        }
-*/
         // load data from json files
         private void LoadData()
         {
@@ -400,18 +383,6 @@ if (toDate.HasValue)
         return await Task.FromResult(_events.FirstOrDefault(e => e.Id == id));
         }
 
-        // update view count
-        public async Task UpdateEventViewCountAsync(Guid eventId)
-        {
-            var evt = _events.FirstOrDefault(e => e.Id == eventId);
-            if (evt != null)
-            {
-                // view tracking can be added later
-                SaveEvents();
-            }
-            await Task.CompletedTask;
-        }
-
         // get active announcements using priority queue
         public async Task<IEnumerable<Announcement>> GetActiveAnnouncementsAsync()
         {
@@ -424,25 +395,28 @@ if (toDate.HasValue)
             {
                 _priorityAnnouncements.TryDequeue(out var announcement, out var priority);
                 if (announcement != null)
-                {tempQueue.Enqueue(announcement, priority);
+                {
+                    tempQueue.Enqueue(announcement, priority);
+                    
                     if (announcement.IsActive && (announcement.ExpiryDate == null || announcement.ExpiryDate > now))
                     {
-                activeAnnouncements.Add(announcement);
+                        activeAnnouncements.Add(announcement);
                     }
+                }
             }
-            }
+            
             // restore priority queue
             while (tempQueue.Count > 0)
             {
                 tempQueue.TryDequeue(out var announcement, out var priority);
                 if (announcement != null)
                 {
-         _priorityAnnouncements.Enqueue(announcement, priority);
+                    _priorityAnnouncements.Enqueue(announcement, priority);
                 }
             }
             return await Task.FromResult(activeAnnouncements);
         }
-        // search announcements
+        // search announcments
         public async Task<IEnumerable<Announcement>> SearchAnnouncementsAsync(string? searchTerm, string? category, string? priority, DateTime? fromDate = null, DateTime? toDate = null)
         {
             var query = _announcements.AsQueryable();
@@ -472,22 +446,10 @@ if (toDate.HasValue)
                 .ThenByDescending(a => a.Date));
         }
 
-        // kry announcement by id
+        // get announcement by id
         public async Task<Announcement?> GetAnnouncementByIdAsync(Guid id)
         {
             return await Task.FromResult(_announcements.FirstOrDefault(a => a.Id == id));
-        }
-
-        // update announcement view count
-        public async Task UpdateAnnouncementViewCountAsync(Guid announcementId)
-        {
-            var announcement = _announcements.FirstOrDefault(a => a.Id == announcementId);
-            if (announcement != null)
-            {
-                // view tracking can be added later
-                SaveAnnouncements();
-            }
-            await Task.CompletedTask;
         }
 
         // get event categories using hashset
@@ -503,7 +465,7 @@ if (toDate.HasValue)
         }
         
        
-      
+        // set user session
         public void SetUserSession(string sessionId)
         {
             _currentUserSession = sessionId;
@@ -515,6 +477,7 @@ if (toDate.HasValue)
             }
         }
         
+         
         public async Task RecordSearchAsync(string searchTerm, string? category = null)
         {
             var search = new UserSearchHistory

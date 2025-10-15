@@ -67,9 +67,9 @@
                     @foreach (var evt in Model.RecommendedEvents.Take(3))
                     {
                         <div class="col-md-4 mb-3">
-                            <div class="card">
+                            <div class="card" style="border-left: 4px solid #0d6efd;">
                                 <div class="card-body">
-                                    <h5 class="card-title">@evt.Title</h5>
+                                    <h5 class="card-title" style="color: #0d6efd;">@evt.Title</h5>
                                     <p class="card-text">@evt.Description</p>
                                     <small class="text-muted">
                                         <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
@@ -96,16 +96,16 @@
                     @foreach (var evt in Model.UpcomingEvents)
                     {
                         <div class="col-12 mb-3">
-                            <div class="card">
+                            <div class="card" style="border-left: 3px solid #28a745;">
                                 <div class="card-body">
-                                    <h5 class="card-title">@evt.Title</h5>
+                                    <h5 class="card-title" style="color: #28a745;">@evt.Title</h5>
                                     <p class="card-text">@evt.Description</p>
                                     <small class="text-muted">
                                         <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
                                         <strong>Location:</strong> @evt.Location
                                     </small>
                                     <div class="mt-2">
-                                        <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                                        <a class="btn btn-sm btn-outline-success" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
                                     </div>
                                 </div>
                             </div>
@@ -126,17 +126,19 @@
                 <div class="row">
                     @foreach (var announcement in Model.ActiveAnnouncements)
                     {
+                        var borderColor = announcement.Priority == "High" ? "#dc3545" : (announcement.Priority == "Normal" ? "#ffc107" : "#6c757d");
+                        var textColor = announcement.Priority == "High" ? "#dc3545" : (announcement.Priority == "Normal" ? "#ffc107" : "#6c757d");
                         <div class="col-12 mb-3">
-                            <div class="card">
+                            <div class="card" style="border-left: 3px solid @borderColor;">
                                 <div class="card-body">
-                                    <h5 class="card-title">@announcement.Title</h5>
+                                    <h5 class="card-title" style="color: @textColor;">@announcement.Title</h5>
                                     <p class="card-text">@announcement.Description</p>
                                     <small class="text-muted">
                                         <strong>Date:</strong> @announcement.Date.ToString("MMM dd, yyyy") |
-                                        <strong>Priority:</strong> @announcement.Priority
+                                        <strong>Priority:</strong> <span style="color: @textColor; font-weight: bold;">@announcement.Priority</span>
                                     </small>
                                     <div class="mt-2">
-                                        <a class="btn btn-sm btn-outline-primary" asp-action="AnnouncementDetails" asp-route-id="@announcement.Id">View Details</a>
+                                        <a class="btn btn-sm btn-outline-danger" asp-action="AnnouncementDetails" asp-route-id="@announcement.Id">View Details</a>
                                     </div>
                                 </div>
                             </div>
@@ -151,3 +153,5 @@
         </div>
     </div>
 </div>
+
+<div style="margin-bottom: 60px;"></div>
