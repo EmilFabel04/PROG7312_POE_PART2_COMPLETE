@@ -543,69 +543,53 @@ namespace MunicipalityMvc.Core.Services
                 return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(6));
             }
             
-            var recommendedEvents = new List<Event>(); //use list to maintain order
-            var addedEventIds = new HashSet<Guid>(); //track which events we've added
+            var recommendedEvents = new List<Event>();
+            var addedEventIds = new HashSet<Guid>();
             
-            // use stack to get most recent searches
+            // get last 3 searches from stack
             var recentSearches = _recentSearches.ToArray().Take(3);
             
-            
+            // for each recent search, find events from that category
             foreach (var search in recentSearches)
             {
-                Event? matchedEvent = null;
-            
-                if (!string.IsNullOrEmpty(search.SearchTerm))
+                // first check if we searched by category
+                string categoryToUse = search.Category;
+                
+                // if no category but has search term, find the category of matching event
+                if (string.IsNullOrEmpty(categoryToUse) && !string.IsNullOrEmpty(search.SearchTerm))
                 {
-                    matchedEvent = upcomingEvents
-                        .FirstOrDefault(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase) 
-                                          && !addedEventIds.Contains(e.Id));
+                    var matchedEvent = upcomingEvents
+                        .FirstOrDefault(e => e.Title.Contains(search.SearchTerm, StringComparison.OrdinalIgnoreCase));
+                    
+                    if (matchedEvent != null)
+                    {
+                        categoryToUse = matchedEvent.Category;
+                    }
                 }
                 
-                if (matchedEvent == null && !string.IsNullOrEmpty(search.Category))
+                // now get events from that category
+                if (!string.IsNullOrEmpty(categoryToUse) && _eventsByCategory.ContainsKey(categoryToUse))
                 {
-                    matchedEvent = upcomingEvents
-                        .FirstOrDefault(e => e.Category.Equals(search.Category, StringComparison.OrdinalIgnoreCase) 
-                                          && !addedEventIds.Contains(e.Id));
-                }
-                if (matchedEvent != null)
-                {
-                    recommendedEvents.Add(matchedEvent);
-                    addedEventIds.Add(matchedEvent.Id);
+                    var categoryEvents = _eventsByCategory[categoryToUse]
+                        .Where(e => e.Date >= DateTime.Today && !addedEventIds.Contains(e.Id))
+                        .Take(1);
+                    
+                    foreach (var evt in categoryEvents)
+                    {
+                        recommendedEvents.Add(evt);
+                        addedEventIds.Add(evt.Id);
+                    }
                 }
             }
             
+            // if we have recommendations return them
             if (recommendedEvents.Count > 0)
             {
                 return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(3));
             }
             
-            var popularCategories = _categorySearchCounts
-                .OrderByDescending(x => x.Value)
-                .Select(x => x.Key)
-                .Take(3);
-            
-            foreach (var category in popularCategories)
-            {
-                if (_eventsByCategory.ContainsKey(category))
-                {
-                    var categoryEvent = _eventsByCategory[category]
-                        .FirstOrDefault(e => e.Date >= DateTime.Today && !addedEventIds.Contains(e.Id));
-                    
-                    if (categoryEvent != null)
-                    {
-                        recommendedEvents.Add(categoryEvent);
-                        addedEventIds.Add(categoryEvent.Id);
-                        if (recommendedEvents.Count >= 3) break;
-                    }
-                }
-            }
-            
-            if (recommendedEvents.Count == 0)
-            {
-                return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(3));
-            }
-            
-            return await Task.FromResult(recommendedEvents.OrderBy(e => e.Date).Take(3));
+            // fallback to upcoming events
+            return await Task.FromResult(upcomingEvents.OrderBy(e => e.Date).Take(3));
         }
        
         private void SaveUserSearchHistory()
