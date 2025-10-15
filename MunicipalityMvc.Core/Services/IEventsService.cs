@@ -19,6 +19,7 @@ namespace MunicipalityMvc.Core.Services
         Task<IEnumerable<string>> GetAnnouncementCategoriesAsync();
         
         // search history with stack
+        void SetUserSession(string sessionId);
         Task RecordSearchAsync(string searchTerm, string? category = null);
         Task<IEnumerable<UserSearchHistory>> GetRecentSearchesAsync();
         

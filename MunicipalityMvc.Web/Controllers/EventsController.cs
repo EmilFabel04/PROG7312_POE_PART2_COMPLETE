@@ -17,6 +17,9 @@ namespace MunicipalityMvc.Web.Controllers
         // main events page
         public async Task<IActionResult> Index()
         {
+            // set user session for search history
+            _eventsService.SetUserSession(HttpContext.Session.Id);
+            
             var upcomingEvents = await _eventsService.GetUpcomingEventsAsync();
             var activeAnnouncements = await _eventsService.GetActiveAnnouncementsAsync();
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
@@ -67,6 +70,9 @@ namespace MunicipalityMvc.Web.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
+
+            // set user session for search history
+            _eventsService.SetUserSession(HttpContext.Session.Id);
 
             // record search for recommendations
             if (!string.IsNullOrEmpty(searchModel.SearchTerm) || !string.IsNullOrEmpty(searchModel.Category))

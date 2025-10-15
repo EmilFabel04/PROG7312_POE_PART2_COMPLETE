@@ -30,6 +30,9 @@ namespace MunicipalityMvc.Core.Services
         
         // concurrent dictionary for thread-safe category counts
         private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
+        
+      
+        private string? _currentUserSession;
         public EventsService(string dataDirectory)
         {
             _dataDirectory = dataDirectory;
@@ -388,7 +391,14 @@ namespace MunicipalityMvc.Core.Services
             return await Task.FromResult(_announcements.Select(a => a.Category).Distinct().OrderBy(c => c));
         }
         
-        // record search history using stack
+       
+      
+        public void SetUserSession(string sessionId)
+        {
+         _currentUserSession = sessionId;
+        LoadUserSearchHistory();
+        }
+        
         public async Task RecordSearchAsync(string searchTerm, string? category = null)
         {
             var search = new UserSearchHistory
@@ -405,6 +415,9 @@ namespace MunicipalityMvc.Core.Services
             {
                 _categorySearchCounts.AddOrUpdate(category, 1, (key, value) => value + 1);
             }
+            
+           
+            SaveUserSearchHistory();
             
             // keep only last 10 searches
             if (_recentSearches.Count > 10)
@@ -487,6 +500,42 @@ namespace MunicipalityMvc.Core.Services
             
             return await Task.FromResult(recommendedEvents.Distinct().OrderBy(e => e.Date).Take(6));
         }
+       
+        private void SaveUserSearchHistory()
+        {
+            if (string.IsNullOrEmpty(_currentUserSession)) return;
+            
+            var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
+            var historyArray = _recentSearches.ToArray();
+            var historyJson = JsonSerializer.Serialize(historyArray, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(historyFile, historyJson);
+        }
+        
+        
+        private void LoadUserSearchHistory()
+        {
+            if (string.IsNullOrEmpty(_currentUserSession)) return;
+            
+            var historyFile = Path.Combine(_dataDirectory, $"search_history_{_currentUserSession}.json");
+            if (File.Exists(historyFile))
+            {
+                try
+                {
+                    var historyJson = File.ReadAllText(historyFile);
+                    var historyArray = JsonSerializer.Deserialize<UserSearchHistory[]>(historyJson);
+                    if (historyArray != null)
+                    {
+                        _recentSearches.Clear();
+                        foreach (var search in historyArray.Reverse()) 
+                        {
+                            _recentSearches.Push(search);
+                        }
+                    }
+                }
+                
+            }
+        }
+        
         // save events
         private void SaveEvents()
         {
