@@ -59,18 +59,22 @@
             <h2>Upcoming Events</h2>
             @if (Model.UpcomingEvents.Any())
             {
-                <div class="list-group">
+                <div class="row">
                     @foreach (var evt in Model.UpcomingEvents)
                     {
-                        <div class="list-group-item">
-                            <h5 class="mb-1">@evt.Title</h5>
-                            <p class="mb-1">@evt.Description</p>
-                            <small class="text-muted">
-                                <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
-                                <strong>Location:</strong> @evt.Location
-                            </small>
-                            <div class="mt-2">
-                                <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                        <div class="col-12 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@evt.Title</h5>
+                                    <p class="card-text">@evt.Description</p>
+                                    <small class="text-muted">
+                                        <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
+                                        <strong>Location:</strong> @evt.Location
+                                    </small>
+                                    <div class="mt-2">
+                                        <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }
@@ -86,18 +90,22 @@
             <h2>Announcements</h2>
             @if (Model.ActiveAnnouncements.Any())
             {
-                <div class="list-group">
+                <div class="row">
                     @foreach (var announcement in Model.ActiveAnnouncements)
                     {
-                        <div class="list-group-item">
-                            <h5 class="mb-1">@announcement.Title</h5>
-                            <p class="mb-1">@announcement.Description</p>
-                            <small class="text-muted">
-                                <strong>Date:</strong> @announcement.Date.ToString("MMM dd, yyyy") |
-                                <strong>Priority:</strong> @announcement.Priority
-                            </small>
-                            <div class="mt-2">
-                                <a class="btn btn-sm btn-outline-primary" asp-action="AnnouncementDetails" asp-route-id="@announcement.Id">View Details</a>
+                        <div class="col-12 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@announcement.Title</h5>
+                                    <p class="card-text">@announcement.Description</p>
+                                    <small class="text-muted">
+                                        <strong>Date:</strong> @announcement.Date.ToString("MMM dd, yyyy") |
+                                        <strong>Priority:</strong> @announcement.Priority
+                                    </small>
+                                    <div class="mt-2">
+                                        <a class="btn btn-sm btn-outline-primary" asp-action="AnnouncementDetails" asp-route-id="@announcement.Id">View Details</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }
@@ -116,18 +124,22 @@
             <div class="col-md-12">
                 <h2>Recommended for You</h2>
                 <p class="text-muted">Based on your search history</p>
-                <div class="list-group">
+                <div class="row">
                     @foreach (var evt in Model.RecommendedEvents.Take(3))
                     {
-                        <div class="list-group-item">
-                            <h5 class="mb-1">@evt.Title</h5>
-                            <p class="mb-1">@evt.Description</p>
-                            <small class="text-muted">
-                                <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
-                                <strong>Location:</strong> @evt.Location
-                            </small>
-                            <div class="mt-2">
-                                <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">@evt.Title</h5>
+                                    <p class="card-text">@evt.Description</p>
+                                    <small class="text-muted">
+                                        <strong>Date:</strong> @evt.Date.ToString("MMM dd, yyyy") |
+                                        <strong>Location:</strong> @evt.Location
+                                    </small>
+                                    <div class="mt-2">
+                                        <a class="btn btn-sm btn-outline-primary" asp-action="EventDetails" asp-route-id="@evt.Id">View Details</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     }
