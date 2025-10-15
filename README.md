@@ -1,21 +1,26 @@
 # ST10359034 - Municipal Services — Citizen Engagement (ASP.NET Core MVC, .NET 8)
 
-This is my Part 1 implementation as a modern web app. I focused on a simple, reliable experience where residents can report issues with attachments, get immediate progress feedback, and see transparent queue handling (FIFO) with JSON persistence.
+This is my Part 2 implementation building on Part 1. I added a comprehensive events and announcements system with advanced data structures, smart recommendations, and session-based user tracking. The app now includes both issue reporting and local events/announcements functionality.
 
 ## Contents
 - Overview
+- Part 2 Features (Events & Announcements)
 - Requirements matrix (how the brief is met)
+- Advanced Data Structures Implementation
 - Tech stack & architecture
 - Projects and file layout
 - How to run (VS2022 and CLI)
 - Usage guide (step-by-step)
 - Data handling & persistence
+- Recommendation Algorithm
 - Engagement & accessibility
 - Privacy & security notes
 - Troubleshooting
 
 ## Overview
-Residents can submit issues with location, category, description, and multiple attachments. The app stores tickets in a queue (FIFO) and displays the submitter’s queue position on the success screen. An optional name/surname and contact details can be provided along with update preferences (email/SMS). The UI is responsive and polished.
+Residents can submit issues with location, category, description, and multiple attachments. The app stores tickets in a queue (FIFO) and displays the submitter's queue position on the success screen. An optional name/surname and contact details can be provided along with update preferences (email/SMS). The UI is responsive and polished.
+
+**NEW in Part 2:** Residents can now browse local events and announcements, search by category and date, and receive personalized recommendations based on their search history. The system uses advanced data structures for efficient data organization and retrieval.
 
 ### Key Screens
 Home (Main menu)
@@ -34,14 +39,167 @@ All Reports (Public list)
 
 ![All Reports](docs/04_reports_list.png)
 
+## Part 2 Features (Events & Announcements)
+
+### New Functionality
+- **Events & Announcements Page**: Browse upcoming events and active announcements
+- **Advanced Search**: Filter by search term, category, priority, and date range
+- **Smart Recommendations**: Personalized event suggestions based on user search history
+- **Session Tracking**: User preferences remembered across browser sessions
+- **Priority Ordering**: Announcements displayed High → Normal → Low priority
+
+### Advanced Data Structures Used
+- **Stack**: User search history (LIFO) for recent search tracking
+- **Queue**: Announcement processing (FIFO) for fair handling
+- **Priority Queue**: High-priority announcements processed first
+- **Dictionary**: Category-based event lookups for fast searching
+- **Sorted Dictionary**: Events automatically sorted by date
+- **Concurrent Dictionary**: Thread-safe category popularity tracking
+- **HashSet**: Unique category storage with no duplicates
+
+### Key Screens (Part 2)
+Events & Announcements Main Page
+- Shows upcoming events and active announcements
+- Search form with multiple filters
+- "Recommended for You" section with personalized suggestions
+
+Search Results
+- Displays filtered events and announcements
+- Clean, organized results layout
+- Easy navigation back to main page
+
+Event/Announcement Details
+- Individual detail pages for each event and announcement
+- Complete information display
+- Back navigation to main events page
+
 ## Requirements Matrix
-- Main menu with three tasks; only “Report Issues” enabled: Implemented in `Views/Home/Index.cshtml`.
+
+### Part 1 Requirements (Issue Reporting)
+- Main menu with three tasks; only "Report Issues" enabled: Implemented in `Views/Home/Index.cshtml`.
 - Report Issues form fields: location (TextBox), category (Dropdown), description (RichTextBox equivalent), attachments (OpenFileDialog/upload): Implemented in `Views/Reports/Create.cshtml`.
 - Submit button and navigation back: Implemented in `Create.cshtml` with a back link and a submit button.
 - Engagement feature: animated progress bar, rotating encouragement toasts during submission, one‑time success toast + optional browser notification: `Create.cshtml` and `Success.cshtml`.
 - Data structure: queue for issues with JSON persistence: `MunicipalityMvc.Core/Services/IssueService.cs`.
 - Responsiveness and consistent design: Bootstrap + custom theme in `wwwroot/css/site.css` and `_Layout.cshtml`.
 - Privacy in public list: only ticket, category, description; no contact/location: `Views/Reports/Index.cshtml`.
+
+### Part 2 Requirements (Events & Announcements)
+- **Local Events and Announcements Page**: Implemented in `Views/Events/Index.cshtml` with comprehensive event and announcement display.
+- **Advanced Data Structures (40 Marks)**:
+  - **Stacks, Queues, Priority Queues (15 Marks)**: Stack for search history, Queue for announcements, PriorityQueue for priority handling in `EventsService.cs`.
+  - **Hash Tables, Dictionaries, Sorted Dictionaries (15 Marks)**: Dictionary for category lookups, SortedDictionary for date ordering, ConcurrentDictionary for thread-safe operations in `EventsService.cs`.
+  - **Sets (10 Marks)**: HashSet for unique categories in `EventsService.cs`.
+- **Additional Recommendation Feature (30 Marks)**: Smart recommendation algorithm using search history and popular categories in `EventsService.cs`.
+- **Search Functionality**: Filter by term, category, priority, and date range in `EventsController.cs`.
+- **Session Management**: User session tracking for personalized recommendations in `Program.cs` and `EventsController.cs`.
+
+## Advanced Data Structures Implementation
+
+### Stack (User Search History)
+```csharp
+private readonly Stack<UserSearchHistory> _recentSearches = new();
+```
+- **Purpose**: LIFO (Last In, First Out) for tracking recent user searches
+- **Usage**: Most recent searches are prioritized for recommendations
+- **Implementation**: `RecordSearchAsync()` pushes searches, `GetRecommendedEventsAsync()` uses recent searches
+
+### Queue (Announcement Processing)
+```csharp
+private readonly Queue<Announcement> _announcementQueue = new();
+```
+- **Purpose**: FIFO (First In, First Out) for fair announcement processing
+- **Usage**: Ensures announcements are processed in order received
+- **Implementation**: `InitializeDataStructures()` enqueues active announcements
+
+### Priority Queue (High Priority Announcements)
+```csharp
+private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
+```
+- **Purpose**: High-priority announcements processed first
+- **Usage**: Priority 1 (High), 2 (Normal), 3 (Low)
+- **Implementation**: Priority-based enqueueing in `InitializeDataStructures()`
+
+### Dictionary (Category Lookups)
+```csharp
+private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
+```
+- **Purpose**: O(1) category-based event retrieval
+- **Usage**: Fast filtering by category in search operations
+- **Implementation**: Populated in `InitializeDataStructures()`, used in search methods
+
+### Sorted Dictionary (Date Ordering)
+```csharp
+private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
+```
+- **Purpose**: Automatic chronological ordering of events
+- **Usage**: Events always displayed in date order
+- **Implementation**: Date-based key organization in `InitializeDataStructures()`
+
+### Concurrent Dictionary (Thread-Safe Category Counts)
+```csharp
+private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
+```
+- **Purpose**: Thread-safe tracking of category popularity
+- **Usage**: Multiple users can search simultaneously without conflicts
+- **Implementation**: `AddOrUpdate()` for atomic operations in `RecordSearchAsync()`
+
+### HashSet (Unique Categories)
+```csharp
+private readonly HashSet<string> _uniqueCategories = new();
+```
+- **Purpose**: Efficient storage of unique category names
+- **Usage**: No duplicate categories, O(1) operations
+- **Implementation**: Automatic uniqueness in `InitializeDataStructures()`
+
+## Recommendation Algorithm
+
+### How It Works
+The recommendation system uses a combination of user search history and popular categories to suggest relevant events:
+
+1. **Search History Tracking**: Every search is recorded using a Stack (LIFO) to prioritize recent searches
+2. **Category Popularity**: ConcurrentDictionary tracks how often each category is searched
+3. **Smart Matching**: Algorithm matches recent search terms and categories to find relevant events
+4. **Fallback Strategy**: If no recent searches match, uses popular categories as recommendations
+
+### Implementation Details
+```csharp
+// Record user searches
+public async Task RecordSearchAsync(string searchTerm, string? category = null)
+{
+    var search = new UserSearchHistory { SearchTerm = searchTerm, Category = category };
+    _recentSearches.Push(search); // Stack for LIFO
+    _categorySearchCounts.AddOrUpdate(category, 1, (key, value) => value + 1); // Thread-safe counting
+}
+
+// Generate recommendations
+public async Task<IEnumerable<Event>> GetRecommendedEventsAsync()
+{
+    // Use recent searches first (Stack LIFO)
+    var recentSearches = _recentSearches.ToArray().Take(5);
+    
+    // Match events based on recent search terms and categories
+    foreach (var search in recentSearches)
+    {
+        var matchingEvents = _events.Where(e => 
+            e.Title.Contains(search.SearchTerm) || 
+            e.Category == search.Category);
+        recommendedEvents.AddRange(matchingEvents);
+    }
+    
+    // Fallback to popular categories if no matches
+    if (!recommendedEvents.Any())
+    {
+        var popularCategories = _categorySearchCounts.OrderByDescending(x => x.Value);
+        // Use popular categories for recommendations
+    }
+}
+```
+
+### Session Persistence
+- User search history is saved to JSON files per session ID
+- Recommendations persist across browser sessions
+- Each user gets personalized suggestions based on their search patterns
 
 ## Tech Stack & Architecture
 - .NET 8, ASP.NET Core MVC (no external NuGet packages required beyond shared framework).
@@ -52,13 +210,22 @@ All Reports (Public list)
 ## Projects and Layout
 - `MunicipalityMvc.Core`
   - `Models/IssueReport.cs`: ticket fields; includes optional `FirstName`, `LastName`, `Email`, `Phone`, and `WantsEmailUpdates`, `WantsSmsUpdates`.
+  - `Models/Event.cs`: event model with title, description, date, location, category, and recurring flag.
+  - `Models/Announcement.cs`: announcement model with title, description, date, expiry, category, priority, and active status.
+  - `Models/UserSearchHistory.cs`: tracks user search terms, categories, and timestamps for recommendations.
   - `Services/IIssueService.cs`, `Services/IssueService.cs`: queue-based storage, JSON persistence, attachment handling, queue position.
+  - `Services/IEventsService.cs`, `Services/EventsService.cs`: events and announcements management with advanced data structures and recommendation algorithm.
 - `MunicipalityMvc.Web`
   - `Controllers/ReportsController.cs`: Create, Success, and Index actions.
-  - `Views/Reports/{Create,Success,Index}.cshtml`: UI pages.
+  - `Controllers/EventsController.cs`: Events and announcements display, search, and recommendation handling.
+  - `Controllers/HomeController.cs`: Main menu and navigation.
+  - `Views/Reports/{Create,Success,Index}.cshtml`: Issue reporting UI pages.
+  - `Views/Events/{Index,SearchResults,EventDetails,AnnouncementDetails}.cshtml`: Events and announcements UI pages.
+  - `Views/Home/Index.cshtml`: Main menu with navigation to all features.
   - `Views/Shared/_Layout.cshtml`: global layout, toast container helpers.
   - `wwwroot/css/site.css`: theme/branding.
   - `AppData/data/`: issues.json and per-ticket attachment folders (created at runtime).
+  - `AppData/`: events.json, announcements.json, and user search history files (created at runtime).
 
 ## How To Run
 ### Visual Studio 2022
@@ -114,13 +281,28 @@ The app will open at `http://localhost:<port>`.
    - The app writes data to `MunicipalityMvc.Web/AppData/data`
 
 ## Usage Guide
-1. Home → click “Report an Issue”.
+
+### Part 1: Issue Reporting
+1. Home → click "Report an Issue".
 2. Optionally enter name/surname and contact info; choose email/SMS updates.
 3. Enter location, select category, and provide a clear description.
 4. Add one or more attachments. Submit.
 5. Submission shows an animated progress bar and rotating messages, then redirects to Success.
 6. Success shows your Ticket code, queue position, details, attachments, and a one‑time toast/notification.
-7. Home → “View All Reports” lists tickets (ticket/category/description only).
+7. Home → "View All Reports" lists tickets (ticket/category/description only).
+
+### Part 2: Events & Announcements
+1. Home → click "Local Events & Announcements".
+2. Browse upcoming events and active announcements on the main page.
+3. Use the search form to filter by:
+   - Search term (title/description)
+   - Category (Sports, Community, etc.)
+   - Priority (High, Normal, Low for announcements)
+   - Date range (From Date and To Date)
+4. Click "Search" to see filtered results.
+5. Click on any event or announcement title to view full details.
+6. The "Recommended for You" section shows personalized suggestions based on your search history.
+7. Your search preferences are remembered across browser sessions for better recommendations.
 
 ## Feature Walkthrough (with screenshots)
 Below are the key features, each paired with a screenshot placeholder you can replace.
@@ -157,30 +339,77 @@ Below are the key features, each paired with a screenshot placeholder you can re
 ![All Reports](docs/04_reports_list.png)
 
 ## Data Handling & Persistence
+
+### Part 1: Issue Reporting
 - Queue storage: `IssueService` keeps an in-memory `Queue<IssueReport>` and persists the full queue to `issues.json`.
 - Attachments: copied into `AppData/data/<ticket-id>/` using original filenames; file list saved with the ticket.
 - Contact info & preferences: Optional `FirstName`, `LastName`, `Email`, `Phone`, plus `WantsEmailUpdates` and `WantsSmsUpdates` are stored per ticket for future parts (e.g., sending updates).
+
+### Part 2: Events & Announcements
+- Events storage: `EventsService` maintains in-memory collections with JSON persistence to `events.json`.
+- Announcements storage: Similar JSON persistence to `announcements.json`.
+- User search history: Individual JSON files per session ID (`search_history_<sessionId>.json`) for personalized recommendations.
+- Advanced data structures: All collections (Stack, Queue, PriorityQueue, Dictionary, SortedDictionary, ConcurrentDictionary, HashSet) are maintained in memory and synchronized with JSON files.
+- Session management: User sessions tracked via `HttpContext.Session.Id` for recommendation personalization.
+
+### General
 - No database server required; runs offline.
+- All data persisted as JSON files in the `AppData/` directory.
 
 ### Data Flow (end-to-end)
+
+#### Part 1: Issue Reporting
 1) `ReportsController.Create (POST)` receives form fields and attachments.
 2) Files are staged with original names and passed to `IssueService.AddAsync`.
 3) `IssueService` copies files into the ticket folder, enqueues the report, and re‑writes `issues.json`.
 4) The browser is redirected to Success, which reads the ticket and computes queue position.
 5) The public list reads the whole queue as a summary.
 
+#### Part 2: Events & Announcements
+1) `EventsController.Index` loads events and announcements from JSON files into advanced data structures.
+2) User searches are recorded via `EventsController.Search` → `EventsService.RecordSearchAsync`.
+3) Search history is pushed to Stack and category counts updated in ConcurrentDictionary.
+4) Recommendations generated using recent searches (Stack LIFO) and popular categories.
+5) All data structures synchronized with JSON files for persistence.
+6) Session-based user tracking maintains personalized recommendations across visits.
+
 ![Data Folder – issues.json and ticket folders](docs/05_data_folder.png)
 
 ## Engagement & Accessibility
+
+### Part 1: Issue Reporting
 - Submission feedback: progress bar + encouraging toasts while preparing the ticket.
 - Email/SMS update switches: Users can opt into updates (stored with the ticket). These preferences are persisted for later phases.
-- Success feedback: one-time toast and optional browser notification (permission‑based) personalized with the submitter’s name.
+- Success feedback: one-time toast and optional browser notification (permission‑based) personalized with the submitter's name.
+
+### Part 2: Events & Announcements
+- Smart recommendations: Smart suggestions based on user search history and popular categories.
+- Session persistence: User preferences and search history remembered across browser sessions.
+- Advanced search: Multiple filter options (term, category, priority, date range) for precise results.
+- Priority ordering: Important announcements displayed first (High → Normal → Low).
+- Real-time search: Instant filtering and results display.
+
+### General
 - Keyboard navigation and labels for inputs; responsive design.
+- Clean, intuitive interface with consistent styling across all features.
 
 ## Privacy & Security Notes
+
+### Part 1: Issue Reporting
 - Public list hides personal/contact info; shows only Ticket, Category, and Description.
 - Input is trimmed server-side; unexpected notification permissions are not required.
 - Files are stored locally; no external uploads.
+
+### Part 2: Events & Announcements
+- User search history is stored locally per session ID; no cross-user data sharing.
+- Session data is temporary and expires after 30 minutes of inactivity.
+- Search history files are created locally and not transmitted externally.
+- All event and announcement data is public information; no privacy concerns.
+
+### General
+- All data stored locally in JSON files; no external database connections.
+- No user authentication required; anonymous usage supported.
+- HTTPS enforced in production for secure data transmission.
 
 ## Troubleshooting
 - .NET 8 SDK / VS version issues
