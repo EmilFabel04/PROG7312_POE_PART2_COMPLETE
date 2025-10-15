@@ -19,10 +19,10 @@
                     <h5 class="card-title">Search Events & Announcements</h5>
                     <form asp-action="Search" method="post">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <input type="text" name="SearchTerm" class="form-control" placeholder="Search..." />
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <select name="Category" class="form-control">
                                     <option value="">All Categories</option>
                                     @foreach (var category in Model.EventCategories)
@@ -31,6 +31,16 @@
                                     }
                                 </select>
                             </div>
+                            
+                            <div class="col-md-2">
+                                <select name="Priority" class="form-control">
+                                    <option value="">All Priorities</option>
+                                    <option value="High">High</option>
+                                    <option value="Normal">Normal</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+
                             <div class="col-md-3">
                                 <input type="date" name="FromDate" class="form-control" placeholder="From Date" />
                             </div>
