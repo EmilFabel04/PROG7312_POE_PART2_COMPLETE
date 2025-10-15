@@ -8,10 +8,12 @@ namespace MunicipalityMvc.Web.Controllers
     public class EventsController : Controller
     {
         private readonly IEventsService _eventsService;
+        private readonly ILogger<EventsController> _logger;
 
-        public EventsController(IEventsService eventsService)
+        public EventsController(IEventsService eventsService, ILogger<EventsController> logger)
         {
             _eventsService = eventsService;
+            _logger = logger;
         }
 
         // main events page
@@ -29,17 +31,17 @@ namespace MunicipalityMvc.Web.Controllers
             var recentSearches = await _eventsService.GetRecentSearchesAsync();
             
             // debug
-            Console.WriteLine($"Recent searches count: {recentSearches.Count()}");
+            _logger.LogInformation($"Recent searches count: {recentSearches.Count()}");
             foreach (var search in recentSearches)
             {
-                Console.WriteLine($"Search: {search.SearchTerm}, Category: {search.Category}");
+                _logger.LogInformation($"Search: {search.SearchTerm}, Category: {search.Category}");
             }
             
             var recommendedEvents = recentSearches.Any() 
                 ? await _eventsService.GetRecommendedEventsAsync() 
                 : Enumerable.Empty<Event>();
             
-            Console.WriteLine($"Recommended events count: {recommendedEvents.Count()}");
+            _logger.LogInformation($"Recommended events count: {recommendedEvents.Count()}");
 
             var viewModel = new EventsIndexViewModel
             {
