@@ -79,19 +79,34 @@ namespace MunicipalityMvc.Web.Controllers
                 await _eventsService.RecordSearchAsync(searchModel.SearchTerm ?? "", searchModel.Category);
             }
 
-            // search events and announcements
-            var events = await _eventsService.SearchEventsAsync(
-                searchModel.SearchTerm, 
-                searchModel.Category, 
-                searchModel.FromDate, 
-                searchModel.ToDate);
+            IEnumerable<Event> events;
+            IEnumerable<Announcement> announcements;
 
-            var announcements = await _eventsService.SearchAnnouncementsAsync(
-                searchModel.SearchTerm, 
-                searchModel.Category, 
-                searchModel.Priority,
-                searchModel.FromDate,
-                searchModel.ToDate);
+            if (!string.IsNullOrEmpty(searchModel.Priority))
+            {
+                events = Enumerable.Empty<Event>();
+                announcements = await _eventsService.SearchAnnouncementsAsync(
+                    searchModel.SearchTerm, 
+                    searchModel.Category, 
+                    searchModel.Priority,
+                    searchModel.FromDate,
+                    searchModel.ToDate);
+            }
+            else
+            {
+                events = await _eventsService.SearchEventsAsync(
+                    searchModel.SearchTerm, 
+                    searchModel.Category, 
+                    searchModel.FromDate, 
+                    searchModel.ToDate);
+
+                announcements = await _eventsService.SearchAnnouncementsAsync(
+                    searchModel.SearchTerm, 
+                    searchModel.Category, 
+                    searchModel.Priority,
+                    searchModel.FromDate,
+                    searchModel.ToDate);
+            }
 
             var eventCategories = await _eventsService.GetEventCategoriesAsync();
             var announcementCategories = await _eventsService.GetAnnouncementCategoriesAsync();
