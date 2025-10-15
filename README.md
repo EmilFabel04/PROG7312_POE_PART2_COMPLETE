@@ -197,5 +197,5 @@ Everything is saved as JSON files in the AppData folder:
 ### Other Resources
 - MDN HTML Basics: https://developer.mozilla.org/en-US/docs/Web/HTML
 - MDN CSS Basics: https://developer.mozilla.org/en-us/docs/Web/CSS
-- OpenAI ChatGPT: helped with debugging and understanding data structures
+- OpenAI ChatGPT: helped with debugging and understanding data structures -> https://openai.com
 - Prettier: https://prettier.io/ for code formatting
