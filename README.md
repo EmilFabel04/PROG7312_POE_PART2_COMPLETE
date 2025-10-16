@@ -83,6 +83,13 @@ private readonly HashSet<string> _uniqueCategories = new();
 
 ![HashSet Implementation](docs/part2_code_queue.png)
 
+## Future Enhancements
+
+### Planned Features for Next Parts:
+- **Concurrent Dictionary**: Full implementation of trending categories display
+- **Queue**: Complete announcement processing workflow with queue-based management
+- **Advanced Analytics**: Category popularity tracking and user behavior analysis
+
 ## Data Structure Usage by Module
 
 ### MunicipalityMvc.Core.Services.EventsService
