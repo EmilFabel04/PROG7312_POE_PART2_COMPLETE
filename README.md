@@ -83,6 +83,24 @@ private readonly HashSet<string> _uniqueCategories = new();
 
 ![HashSet Implementation](docs/part2_code_queue.png)
 
+## Data Structure Usage by Module
+
+### MunicipalityMvc.Core.Services.EventsService
+This is the main service class that contains all 7 advanced data structures:
+
+- **Stack** (`_recentSearches`) - Used in `RecordSearchAsync()` and `GetRecommendedEventsAsync()`
+- **Queue** (`_announcementQueue`) - Used in `InitializeDataStructures()` for announcement processing
+- **Priority Queue** (`_priorityAnnouncements`) - Used in `GetActiveAnnouncementsAsync()` for priority ordering
+- **Dictionary** (`_eventsByCategory`) - Used in `SearchEventsAsync()` and `GetRecommendedEventsAsync()` for fast category lookups
+- **Sorted Dictionary** (`_eventsByDate`) - Used in `GetUpcomingEventsAsync()` for chronological event ordering
+- **Concurrent Dictionary** (`_categorySearchCounts`) - Used in `RecordSearchAsync()` for thread-safe category tracking
+- **HashSet** (`_uniqueCategories`) - Used in `GetEventCategoriesAsync()` for unique category storage
+
+### MunicipalityMvc.Web.Controllers.EventsController
+This controller uses the EventsService and its data structures through:
+- `Index()` action - calls recommendation methods that use Stack and Dictionary
+- `Search()` action - calls search methods that use Dictionary and Sorted Dictionary
+
 ## How Recommendations Work
 
 The recommendation system is pretty simple:
