@@ -221,3 +221,4 @@ Everything is saved as JSON files in the AppData folder:
 - MDN CSS Basics: https://developer.mozilla.org/en-us/docs/Web/CSS
 - OpenAI ChatGPT: helped with debugging and understanding data structures -> https://openai.com
 - Prettier: https://prettier.io/ for code formatting
+- Youtube : https://youtube.com/ for video tutorials and explenations
