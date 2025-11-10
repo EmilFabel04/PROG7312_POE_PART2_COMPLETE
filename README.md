@@ -1,7 +1,10 @@
 # Municipal Services Part 2 - Local Events & Announcements
 **Student**: ST10359034  
 **Module**: PROG7312  
-**Year**: 2024
+**Year**: 2025
+
+## GITHUB REPO LINK:
+https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
 
 ## Overview
 
@@ -15,7 +18,7 @@ This is my Part 2 project where I added a local events and announcements feature
 - See important announcements first
 - Color-coded cards to make things easier to see
 
-## The 7 Data Structures I Used
+## The 7 Data Structures
 
 ### 1. Stack
 I used a Stack to keep track of recent searches. It works like a stack of plates - the last search you do goes on top, and that's the first one we look at for recommendations.
@@ -78,7 +81,32 @@ Stores unique categories - automatically removes duplicates. Makes it easy to ge
 private readonly HashSet<string> _uniqueCategories = new();
 ```
 
-![HashSet Implementation](docs/part2_code_hashset.png)
+![HashSet Implementation](docs/part2_code_queue.png)
+
+## Future Enhancements
+
+### Planned Features for Next Parts:
+- **Concurrent Dictionary**: Full implementation of trending categories display
+- **Queue**: Complete announcement processing workflow with queue-based management
+- **Advanced Analytics**: Category popularity tracking and user behavior analysis
+
+## Data Structure Usage by Module
+
+### MunicipalityMvc.Core.Services.EventsService
+This is the main service class that contains all 7 advanced data structures:
+
+- **Stack** (`_recentSearches`) - Used in `RecordSearchAsync()` and `GetRecommendedEventsAsync()`
+- **Queue** (`_announcementQueue`) - Used in `InitializeDataStructures()` for announcement processing
+- **Priority Queue** (`_priorityAnnouncements`) - Used in `GetActiveAnnouncementsAsync()` for priority ordering
+- **Dictionary** (`_eventsByCategory`) - Used in `SearchEventsAsync()` and `GetRecommendedEventsAsync()` for fast category lookups
+- **Sorted Dictionary** (`_eventsByDate`) - Used in `GetUpcomingEventsAsync()` for chronological event ordering
+- **Concurrent Dictionary** (`_categorySearchCounts`) - Used in `RecordSearchAsync()` for thread-safe category tracking
+- **HashSet** (`_uniqueCategories`) - Used in `GetEventCategoriesAsync()` for unique category storage
+
+### MunicipalityMvc.Web.Controllers.EventsController
+This controller uses the EventsService and its data structures through:
+- `Index()` action - calls recommendation methods that use Stack and Dictionary
+- `Search()` action - calls search methods that use Dictionary and Sorted Dictionary
 
 ## How Recommendations Work
 
@@ -106,8 +134,9 @@ Built with:
 
 ### In Visual Studio 2022:
 1. Open the `.sln` file
-2. Press F5
-3. Browser opens automatically
+2. Delete old AppData .json files if present
+3. Press F5
+4. Browser opens automatically
 
 ### From Command Line:
 ```bash
@@ -133,11 +162,6 @@ After you search, it shows the filtered results.
 After searching, you get personalized recommendations at the top of the events page.
 
 ![Recommendations](docs/part2_recommendations.png)
-
-### Priority Search
-When you select a priority, it only shows announcements (no events).
-
-![Priority Search](docs/part2_priority_search.png)
 
 ## Session Management
 
@@ -189,8 +213,6 @@ Everything is saved as JSON files in the AppData folder:
 ### Tutorials & Learning Resources
 - W3Schools C#: https://www.w3schools.com/cs/
 - W3Schools ASP.NET: https://www.w3schools.com/asp/
-- W3Schools Bootstrap: https://www.w3schools.com/bootstrap5/
-- Bootstrap 5 Docs: https://getbootstrap.com/docs/5.3/
 - GeeksforGeeks Data Structures in C#: https://www.geeksforgeeks.org/data-structures-in-c-sharp/
 - TutorialsTeacher LINQ: https://www.tutorialsteacher.com/linq
 
@@ -204,5 +226,6 @@ Everything is saved as JSON files in the AppData folder:
 ### Other Resources
 - MDN HTML Basics: https://developer.mozilla.org/en-US/docs/Web/HTML
 - MDN CSS Basics: https://developer.mozilla.org/en-us/docs/Web/CSS
-- OpenAI ChatGPT: helped with debugging and understanding data structures
+- OpenAI ChatGPT: helped with debugging and understanding data structures -> https://openai.com
 - Prettier: https://prettier.io/ for code formatting
+- Youtube : https://youtube.com/ for video tutorials and explenations
