@@ -1,4 +1,5 @@
 using MunicipalityMvc.Core.DataStructures.Trees;
+using MunicipalityMvc.Core.DataStructures.Heaps;
 using MunicipalityMvc.Core.Models;
 
 namespace MunicipalityMvc.Core.Services;
@@ -6,19 +7,23 @@ namespace MunicipalityMvc.Core.Services;
 public class ServiceRequestStatusService : IServiceRequestStatusService
 {
 	private readonly SearchTree _searchTree;
+	private readonly PriorityHeap _priorityHeap;
 
 	public ServiceRequestStatusService()
 	{
 		_searchTree = new SearchTree();
+		_priorityHeap = new PriorityHeap();
 	}
 
 	public void LoadRequests(List<ServiceRequest> requests)
 	{
 		_searchTree.Clear();
+		_priorityHeap.Clear();
 
 		foreach (var request in requests)
 		{
 			_searchTree.Add(request);
+			_priorityHeap.Add(request);
 		}
 	}
 
@@ -34,8 +39,7 @@ public class ServiceRequestStatusService : IServiceRequestStatusService
 
 	public List<ServiceRequest> GetPriorityRequests()
 	{
-		// will implement with heap later
-		return new List<ServiceRequest>();
+		return _priorityHeap.GetAll();
 	}
 
 	public List<ServiceRequest> GetDependencies(Guid requestId)

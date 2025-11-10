@@ -1,43 +1,34 @@
 @model List<MunicipalityMvc.Core.Models.ServiceRequest>
 @{
-    ViewData["Title"] = "Service Request Status";
+    ViewData["Title"] = "Priority Queue";
 }
 
 <div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div>
-            <h2 class="mb-1">Service Request Status</h2>
-            <p class="text-muted mb-0">View and search service requests</p>
-        </div>
-    </div>
+    <h2 class="mb-3">Priority Queue</h2>
 
-    <div class="mb-3 d-flex gap-2">
-        <form asp-action="Search" method="get" class="d-flex gap-2">
-            <input type="text" name="requestNumber" class="form-control" placeholder="Search by request number" style="max-width: 300px;" />
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-        <a asp-action="Priority" class="btn btn-warning">View Priority Queue</a>
-    </div>
     <div class="table-responsive">
         <table class="table table-striped table-hover align-middle table-sm">
             <thead>
                 <tr>
+                    <th>#</th>
                     <th>Request #</th>
                     <th>Title</th>
-                    <th>Category</th>
                     <th>Priority</th>
                     <th>Status</th>
-                    <th>Assigned To</th>
+                    <th>Category</th>
                     <th>Location</th>
                 </tr>
             </thead>
             <tbody>
+                @{
+                    int position = 1;
+                }
                 @foreach (var request in Model)
                 {
                     <tr>
+                        <td>@position</td>
                         <td><strong>@request.RequestNumber</strong></td>
                         <td>@request.Title</td>
-                        <td><span class="badge text-bg-secondary">@request.Category</span></td>
                         <td>
                             @if (request.Priority == MunicipalityMvc.Core.Models.RequestPriority.High)
                             {
@@ -74,14 +65,16 @@
                                 <span class="badge text-bg-dark">Closed</span>
                             }
                         </td>
-                        <td>@(string.IsNullOrEmpty(request.AssignedTo) ? "Unassigned" : request.AssignedTo)</td>
+                        <td>@request.Category</td>
                         <td>@request.Location</td>
                     </tr>
+                    position++;
                 }
             </tbody>
         </table>
     </div>
 
-    <a asp-controller="Home" asp-action="Index" class="btn btn-link">Back to Main Menu</a>
+    <a asp-action="Index" class="btn btn-link">Back to All Requests</a>
 </div>
+
 

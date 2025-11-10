@@ -38,4 +38,11 @@ public class ServiceStatusController : Controller
 		var request = _statusService.FindByRequestNumber(requestNumber);
 		return View("SearchResult", request);
 	}
+
+	[HttpGet]
+	public IActionResult Priority()
+	{
+		var requests = _statusService.GetPriorityRequests();
+		return View(requests);
+	}
 }
