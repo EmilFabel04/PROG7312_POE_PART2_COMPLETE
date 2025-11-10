@@ -45,4 +45,20 @@ public class ServiceStatusController : Controller
 		var requests = _statusService.GetPriorityRequests();
 		return View(requests);
 	}
+
+	[HttpGet]
+	public IActionResult Dependencies(Guid id)
+	{
+		var request = _statusService.GetAllRequests().FirstOrDefault(r => r.Id == id);
+		
+		if (request == null)
+		{
+			return NotFound();
+		}
+		ViewBag.Request = request;
+		ViewBag.Dependencies = _statusService.GetDependencies(id);
+		ViewBag.DependentRequests = _statusService.GetRequestsDependingOn(id);
+		
+		return View();
+	}
 }

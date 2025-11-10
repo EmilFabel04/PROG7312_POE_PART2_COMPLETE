@@ -1,0 +1,151 @@
+@{
+    ViewData["Title"] = "Request Dependencies";
+    var request = ViewBag.Request as MunicipalityMvc.Core.Models.ServiceRequest;
+    var dependencies = ViewBag.Dependencies as List<MunicipalityMvc.Core.Models.ServiceRequest>;
+    var dependentRequests = ViewBag.DependentRequests as List<MunicipalityMvc.Core.Models.ServiceRequest>;
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Request Dependencies</h2>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>@request.RequestNumber - @request.Title</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Status:</strong> 
+                @if (request.Status == MunicipalityMvc.Core.Models.RequestStatus.New)
+                {
+                    <span class="badge text-bg-info">New</span>
+                }
+                else if (request.Status == MunicipalityMvc.Core.Models.RequestStatus.InProgress)
+                {
+                    <span class="badge text-bg-primary">In Progress</span>
+                }
+                else if (request.Status == MunicipalityMvc.Core.Models.RequestStatus.Assigned)
+                {
+                    <span class="badge text-bg-warning">Assigned</span>
+                }
+                else if (request.Status == MunicipalityMvc.Core.Models.RequestStatus.Resolved)
+                {
+                    <span class="badge text-bg-success">Resolved</span>
+                }
+                else
+                {
+                    <span class="badge text-bg-dark">Closed</span>
+                }
+            </p>
+            <p><strong>Description:</strong> @request.Description</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Dependencies</h4>
+            @if (dependencies.Count == 0)
+            {
+                <p class="text-muted">No dependencies</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Request #</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dep in dependencies)
+                            {
+                                <tr>
+                                    <td>@dep.RequestNumber</td>
+                                    <td>@dep.Title</td>
+                                    <td>
+                                        @if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.New)
+                                        {
+                                            <span class="badge text-bg-info">New</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.InProgress)
+                                        {
+                                            <span class="badge text-bg-primary">In Progress</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.Assigned)
+                                        {
+                                            <span class="badge text-bg-warning">Assigned</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.Resolved)
+                                        {
+                                            <span class="badge text-bg-success">Resolved</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-dark">Closed</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h4>Dependent Requests</h4>
+            @if (dependentRequests.Count == 0)
+            {
+                <p class="text-muted">No dependent requests</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Request #</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var dep in dependentRequests)
+                            {
+                                <tr>
+                                    <td>@dep.RequestNumber</td>
+                                    <td>@dep.Title</td>
+                                    <td>
+                                        @if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.New)
+                                        {
+                                            <span class="badge text-bg-info">New</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.InProgress)
+                                        {
+                                            <span class="badge text-bg-primary">In Progress</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.Assigned)
+                                        {
+                                            <span class="badge text-bg-warning">Assigned</span>
+                                        }
+                                        else if (dep.Status == MunicipalityMvc.Core.Models.RequestStatus.Resolved)
+                                        {
+                                            <span class="badge text-bg-success">Resolved</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge text-bg-dark">Closed</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <a asp-action="Index" class="btn btn-link mt-3">Back to All Requests</a>
+</div>
