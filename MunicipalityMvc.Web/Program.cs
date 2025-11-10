@@ -18,6 +18,7 @@ builder.Services.AddSession(options =>
 var appData = Path.Combine(builder.Environment.ContentRootPath, "AppData");
 builder.Services.AddSingleton<IIssueService>(_ => new IssueService(appData));
 builder.Services.AddSingleton<IEventsService>(_ => new EventsService(appData));
+builder.Services.AddSingleton<IServiceRequestStatusService, ServiceRequestStatusService>();
 
 var app = builder.Build();
 

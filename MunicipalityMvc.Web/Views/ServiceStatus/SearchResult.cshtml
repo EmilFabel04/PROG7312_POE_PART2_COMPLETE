@@ -1,0 +1,71 @@
+@model MunicipalityMvc.Core.Models.ServiceRequest
+@{
+    ViewData["Title"] = "Search Result";
+}
+
+<div class="container py-4">
+    <h2 class="mb-3">Search Result</h2>
+
+    @if (Model == null)
+    {
+        <div class="alert alert-warning">
+            <p>No request found. Please try another request number.</p>
+        </div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.RequestNumber - @Model.Title</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Category:</strong> @Model.Category</p>
+                <p><strong>Priority:</strong> 
+                    @if (Model.Priority == MunicipalityMvc.Core.Models.RequestPriority.High)
+                    {
+                        <span class="badge text-bg-danger">High</span>
+                    }
+                    else if (Model.Priority == MunicipalityMvc.Core.Models.RequestPriority.Medium)
+                    {
+                        <span class="badge text-bg-warning">Medium</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-success">Low</span>
+                    }
+                </p>
+                <p><strong>Status:</strong> 
+                    @if (Model.Status == MunicipalityMvc.Core.Models.RequestStatus.New)
+                    {
+                        <span class="badge text-bg-info">New</span>
+                    }
+                    else if (Model.Status == MunicipalityMvc.Core.Models.RequestStatus.InProgress)
+                    {
+                        <span class="badge text-bg-primary">In Progress</span>
+                    }
+                    else if (Model.Status == MunicipalityMvc.Core.Models.RequestStatus.Assigned)
+                    {
+                        <span class="badge text-bg-warning">Assigned</span>
+                    }
+                    else if (Model.Status == MunicipalityMvc.Core.Models.RequestStatus.Resolved)
+                    {
+                        <span class="badge text-bg-success">Resolved</span>
+                    }
+                    else
+                    {
+                        <span class="badge text-bg-dark">Closed</span>
+                    }
+                </p>
+                <p><strong>Location:</strong> @Model.Location</p>
+                <p><strong>Reported By:</strong> @Model.ReportedBy</p>
+                <p><strong>Contact:</strong> @Model.ContactInfo</p>
+                <p><strong>Assigned To:</strong> @(string.IsNullOrEmpty(Model.AssignedTo) ? "Unassigned" : Model.AssignedTo)</p>
+                <p><strong>Description:</strong> @Model.Description</p>
+                <p><strong>Created:</strong> @Model.CreatedDate.ToString("yyyy-MM-dd")</p>
+            </div>
+        </div>
+    }
+
+    <a asp-action="Index" class="btn btn-link mt-3">Back to All Requests</a>
+</div>
+
