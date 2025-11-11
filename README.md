@@ -232,14 +232,11 @@ GetAllDependenciesBFS breadth-first search (lines 90-115)
 ![Complex Dependency Chain](docs/part3_07_dependency_chain.png)
 *Example of complex dependency chain found using DFS traversal*
 
-### Data Structure Performance
-![Performance Comparison](docs/part3_08_performance_demo.png)
-*Demonstration of search performance with large dataset*
-
 ## Technical Architecture
 
 ### Project Structure
-project structure screenshot
+
+![Project Structure](docs/project_structure_p3.png)
 
 ### How Everything Works Together
 The `ServiceRequestStatusService` uses all three data structures:
