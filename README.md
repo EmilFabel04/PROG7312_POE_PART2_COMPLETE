@@ -1,4 +1,4 @@
-# Municipal Services Part 2 - Local Events & Announcements
+# Municipal Services Part 3 - Service Request Status System
 **Student**: ST10359034  
 **Module**: PROG7312  
 **Year**: 2025
@@ -8,193 +8,273 @@ https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
 
 ## Overview
 
-This is my Part 2 project where I added a local events and announcements feature to the municipal services app. Users can see upcoming events, search for things, and get recommendations based on what they searched for before.
+This Municipal Services app is an ASP.NET Core MVC application that helps citizens interact with municipal services. Part 3 focuses on the Service Request Status System, which implements advanced data structures to efficiently manage, search, and display service requests with their dependencies and priorities.
 
-## Features
+The system uses three data structures:
+- **Binary Search Tree** for quick searches by request number
+- **Min-Heap** for organizing requests by priority (urgent first)
+- **Graph** for showing which requests depend on other requests
 
-- View local events and announcements
-- Search by name, category, priority, or date
-- Get personalized event suggestions
-- See important announcements first
-- Color-coded cards to make things easier to see
+## Table of Contents
+1. [System Requirements](#system-requirements)
+2. [How to Compile and Run](#how-to-compile-and-run)
+3. [Using the Service Request Status System](#using-the-service-request-status-system)
+4. [Data Structures Implementation](#data-structures-implementation)
+5. [Screenshots](#screenshots)
+6. [Technical Architecture](#technical-architecture)
+7. [Sample Data](#sample-data)
+8. [Troubleshooting](#troubleshooting)
+9. [References](#references)
 
-## The 7 Data Structures
+## System Requirements
 
-### 1. Stack
-I used a Stack to keep track of recent searches. It works like a stack of plates - the last search you do goes on top, and that's the first one we look at for recommendations.
+- **.NET 8.0 SDK** or higher
+- **Visual Studio 2022**
+- **Windows, macOS, or Linux**
+- **Web browser** (Chrome, Firefox, Safari, Edge)
 
-```csharp
-private readonly Stack<UserSearchHistory> _recentSearches = new();
+## How to Compile and Run
+
+### Option 1: Download ZIP from GitHub
+1. Go to: https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
+2. Click the green **Code** button
+3. Select **Download ZIP**
+4. Extract the ZIP file to your computer
+5. Open the extracted folder in your terminal/command prompt
+
+### Option 2: Clone from GitHub
+```bash
+git clone https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE.git
+cd PROG7312_POE_PART2_COMPLETE
 ```
 
-![Stack Implementation](docs/part2_code_stack.png)
+### Steps to Run:
 
-### 2. Queue  
-The Queue handles announcements in order. First announcement in gets processed first (FIFO - first in first out).
-
-```csharp
-private readonly Queue<Announcement> _announcementQueue = new();
-```
-
-![Queue Implementation](docs/part2_code_queue.png)
-
-### 3. Priority Queue
-This makes sure important announcements show up first. High priority = 1, Normal = 2, Low = 3. Lower numbers come out first.
-
-```csharp
-private readonly PriorityQueue<Announcement, int> _priorityAnnouncements = new();
-```
-
-![Priority Queue Implementation](docs/part2_code_priority_queue.png)
-
-### 4. Dictionary
-Makes searching by category super fast. Instead of checking every event, I can just look up the category directly.
-
-```csharp
-private readonly Dictionary<string, List<Event>> _eventsByCategory = new();
-```
-
-![Dictionary Implementation](docs/part2_code_dictionary.png)
-
-### 5. Sorted Dictionary
-Keeps events sorted by date automatically. No need to manually sort them every time.
-
-```csharp
-private readonly SortedDictionary<DateTime, List<Event>> _eventsByDate = new();
-```
-
-![Sorted Dictionary Implementation](docs/part2_code_sorted_dictionary.png)
-
-### 6. Concurrent Dictionary
-Thread-safe dictionary that tracks how many times each category gets searched. Multiple users can search at the same time without issues.
-
-```csharp
-private readonly ConcurrentDictionary<string, int> _categorySearchCounts = new();
-```
-
-![Concurrent Dictionary Implementation](docs/part2_code_concurrent_dictionary.png)
-
-### 7. HashSet
-Stores unique categories - automatically removes duplicates. Makes it easy to get a list of all categories without repeats.
-
-```csharp
-private readonly HashSet<string> _uniqueCategories = new();
-```
-
-![HashSet Implementation](docs/part2_code_queue.png)
-
-## Future Enhancements
-
-### Planned Features for Next Parts:
-- **Concurrent Dictionary**: Full implementation of trending categories display
-- **Queue**: Complete announcement processing workflow with queue-based management
-- **Advanced Analytics**: Category popularity tracking and user behavior analysis
-
-## Data Structure Usage by Module
-
-### MunicipalityMvc.Core.Services.EventsService
-This is the main service class that contains all 7 advanced data structures:
-
-- **Stack** (`_recentSearches`) - Used in `RecordSearchAsync()` and `GetRecommendedEventsAsync()`
-- **Queue** (`_announcementQueue`) - Used in `InitializeDataStructures()` for announcement processing
-- **Priority Queue** (`_priorityAnnouncements`) - Used in `GetActiveAnnouncementsAsync()` for priority ordering
-- **Dictionary** (`_eventsByCategory`) - Used in `SearchEventsAsync()` and `GetRecommendedEventsAsync()` for fast category lookups
-- **Sorted Dictionary** (`_eventsByDate`) - Used in `GetUpcomingEventsAsync()` for chronological event ordering
-- **Concurrent Dictionary** (`_categorySearchCounts`) - Used in `RecordSearchAsync()` for thread-safe category tracking
-- **HashSet** (`_uniqueCategories`) - Used in `GetEventCategoriesAsync()` for unique category storage
-
-### MunicipalityMvc.Web.Controllers.EventsController
-This controller uses the EventsService and its data structures through:
-- `Index()` action - calls recommendation methods that use Stack and Dictionary
-- `Search()` action - calls search methods that use Dictionary and Sorted Dictionary
-
-## How Recommendations Work
-
-The recommendation system is pretty simple:
-1. When you search for something, it gets saved to a Stack
-2. When you come back to the events page, it looks at your most recent search
-3. It finds events in the same category as what you searched
-4. Shows you the top 3 upcoming events from that category
-
-If you haven't searched yet, it just shows the next 3 upcoming events.
-
-![Recommendation Algorithm](docs/part2_code_recommendation.png)
-
-## Project Setup
-
-Built with:
-- ASP.NET Core MVC (.NET 8)
-- C#
-
-- JSON files for storing data
-
-![Solution Explorer](docs/part2_solution_explorer.png)
-
-## How to Run It
-
-### In Visual Studio 2022:
-1. Open the `.sln` file
-2. Delete old AppData .json files if present
-3. Press F5
-4. Browser opens automatically
-
-### From Command Line:
+#### 1. Restore Dependencies
 ```bash
 dotnet restore
+```
+
+#### 2. Build the Solution
+```bash
 dotnet build
+```
+
+#### 3. Run the Application
+```bash
 dotnet run --project MunicipalityMvc.Web
 ```
-Then go to: https://localhost:7034
+
+#### 4. Open in Browser
+Go to one of these addresses:
+- **HTTPS**: `https://localhost:7001`
+- **HTTP**: `http://localhost:5000`
+
+The app will start with sample service request data ready to use.
+
+## Using the Service Request Status System
+
+### Main Features
+
+#### 1. **All Service Requests** 
+- Go to **Service Status -> All Requests** 
+- See all service requests in a table sorted by request number
+- Use the search box to find requests quickly
+- Shows: Request Number, Title, Status, Priority, Category, Location
+
+#### 2. **Priority Queue** 
+- Go to **Service Status -> Priority Queue** 
+- See requests ordered by priority: High first, then Medium, then Low
+- Older requests with same priority come first
+- Helps workers see urgent requests at the top
+
+#### 3. **Dependencies** 
+- Click **Dependencies** button next to any request
+- See what other requests this one needs to wait for
+- See what requests are waiting for this one
+- Shows the connection between different requests
+
+#### 4. **Search** 
+- Type a request number like "SR-A2K9P3" in the search box
+- Get the full details of that request quickly
+- Uses the Binary Search Tree for fast searching
+
+## Data Structures Implementation
+
+### 1. Binary Search Tree 
+**File**: `SearchTree.cs`
+
+**What it does**: Helps find service requests quickly by their request number.
+
+**How it works**:
+- Stores requests in a tree structure
+- Each request number is compared alphabetically 
+- Smaller numbers go left, bigger numbers go right
+- Can find any request very quickly
+
+**Why it's better**:
+- Much faster than checking every request one by one
+- Keeps requests in alphabetical order automatically
+- Good for the search feature and sorted lists
+
+### 2. Min-Heap (Priority Queue)
+**File**: `PriorityHeap.cs`
+
+**What it does**: Organizes service requests by how urgent they are.
+
+**How it works**:
+- High priority = 1, Medium = 2, Low = 3 (smaller number = more urgent)
+- Most urgent request is always at the top
+- When you add a request, it moves to the right spot automatically
+- If two requests have same priority, older one comes first
+
+**Why it's better**:
+- Workers always see the most urgent request first
+- Don't need to sort the whole list every time
+- Adding new requests is fast
+
+**Example**:
+```
+1. Water Pipe Burst (High priority)
+2. Broken Streetlight (High priority)  
+3. Power Outage (High priority)
+4. Pothole Repair (Medium priority)
+5. Garbage Collection (Medium priority)
+```
+
+### 3. Graph (Dependencies)
+**File**: `RequestGraph.cs`
+
+**What it does**: Shows which service requests depend on other requests.
+
+**How it works**:
+- Keeps track of connections between requests
+- Some requests can't start until others are finished
+- Uses DFS (Depth-First Search) to find all the requests that need to be done first
+- Can also find which requests are waiting for a specific one
+
+**Why it's useful**:
+- Shows workers what order to do things in
+- Prevents starting work that can't be finished yet
+- Helps plan the work schedule
+
+**Example**:
+```
+Traffic Light Repair
+└─ needs -> Power Outage to be fixed first
+   └─ needs -> Electrical Safety Check first
+
+So the order is: Safety Check -> Power Fix -> Traffic Light
+```
+
+**DFS vs BFS**:
+- **DFS**: Follows one chain all the way to the end first
+- **BFS**: Looks at all direct connections first, then goes deeper
+- We use DFS to show the complete chain of what needs to be done
 
 ## Screenshots
 
-### Main Events Page
-This shows the search form at the top, upcoming events in green cards, and announcements with different colors based on priority.
+### Navigation and Home Page
+![Home Page with Service Status Links](docs/part3_01_home_page.png)
+*Home page showing Service Request Status quick links and navigation*
 
-![Events Main Page](docs/part2_events_main_page.png)
+### All Service Requests (Binary Search Tree)
+![All Service Requests Table](docs/part3_02_all_requests.png)
+*Complete list of service requests sorted by request number using BST*
 
-### Search Results
-After you search, it shows the filtered results.
+![Search Functionality](docs/part3_03_search_feature.png)
+*Fast search by request number demonstrating BST lookup efficiency*
 
-![Search Results](docs/part2_search_results.png)
+![Search Results](docs/part3_04_search_results.png)
+*Detailed view of found service request*
 
-### Recommendations
-After searching, you get personalized recommendations at the top of the events page.
+### Priority Queue (Min-Heap)
+![Priority Queue View](docs/part3_05_priority_queue.png)
+*Service requests ordered by priority using Min-Heap structure*
 
-![Recommendations](docs/part2_recommendations.png)
+### Dependencies (Graph with DFS)
+![Dependencies Page](docs/part3_06_dependencies_main.png)
+*Dependencies view showing upstream and downstream relationships*
 
-## Session Management
+![Complex Dependency Chain](docs/part3_07_dependency_chain.png)
+*Example of complex dependency chain found using DFS traversal*
 
-I set up sessions in `Program.cs` so each user has their own search history that gets saved.
+### Data Structure Performance
+![Performance Comparison](docs/part3_08_performance_demo.png)
+*Demonstration of search performance with large dataset*
 
-![Session Config](docs/part2_code_session.png)
+## Technical Architecture
 
-## Data Storage
+### Project Structure
+project structure screenshot
 
-Everything is saved as JSON files in the AppData folder:
+### How Everything Works Together
+The `ServiceRequestStatusService` uses all three data structures:
+- **LoadRequests()**: Puts the same data into all three structures
+- **FindByRequestNumber()**: Uses the Binary Search Tree to find requests quickly
+- **GetPriorityRequests()**: Uses the Heap to get requests in priority order
+- **GetDependencies()**: Uses the Graph to find what requests depend on others
 
-![AppData Files](docs/part2_appdata_files.png)
+### Setup
+All the services are set up in `Program.cs` so they work together properly.
 
-- `events.json` - stores all events
-- `announcements.json` - stores all announcements
-- `search_history.json` - stores user searches for recommendations
+## Sample Data
+
+The app comes with 15 example service requests from Cape Town areas:
+
+### High Priority (Urgent)
+- **SR-A2K9P3**: Water Pipe Burst (Main Street, City Centre)
+- **SR-B7X4M2**: Broken Streetlight (Oak Avenue, Sea Point) 
+- **SR-C5N8Q7**: Power Outage (Pine Road, Camps Bay)
+
+### Medium Priority  
+- **SR-D2M9N4**: Pothole Repair (Elm Street, Observatory)
+- **SR-E8P1R6**: Garbage Collection (Birch Lane, Woodstock)
+
+### Low Priority
+- **SR-F3L8K1**: Park Maintenance (Cedar Avenue, Newlands)
+- **SR-G7Q4S9**: Graffiti Removal (Maple Drive, Claremont)
+
+### Dependencies
+Some requests depend on others:
+- Streetlight repair waits for water pipe fix (can't do electrical work while flooding)
+- Traffic light repair waits for power to be restored
+- Road work waits for potholes to be fixed first
+
+## Troubleshooting
+
+**Application Won't Start**
+- Make sure you have .NET 8.0 installed: `dotnet --version`
+- Run `dotnet restore` then `dotnet build`
+
+**Port Issues**
+- Close other instances or change ports in `launchSettings.json`
+
+**Search Not Working**
+- Use exact format like "SR-A2K9P3" (case-sensitive)
+
+**No Dependencies Showing**
+- Dependencies are in the seed data, restart the app to reload
 
 ## How I Met the Requirements
 
-### Data Structures (40 marks):
-- Stack for search history
-- Queue for announcement processing  
-- Priority Queue for priority announcements
-- Dictionary for fast category lookups
-- Sorted Dictionary for date ordering
-- Concurrent Dictionary for thread-safe counting
-- HashSet for unique categories
+### Data Structures Implementation (50 marks):
+- **Binary Search Tree (BST)**: Fast O(log n) lookup of service requests by request number
+- **Min-Heap (Priority Queue)**: Manages urgent requests by priority (High=1, Medium=2, Low=3)
+- **Graph with DFS/BFS**: Tracks dependencies between service requests using adjacency list
 
-### Recommendations (30 marks):
-- Tracks what users search for
-- Uses Stack to get most recent search
-- Shows 3 relevant events based on search history
-- Saves history across sessions
+### Service Request Status Features (30 marks):
+- **All Requests View**: Displays sorted list using BST traversal
+- **Search Functionality**: Instant lookup by request number using BST
+- **Priority Queue View**: Shows requests ordered by urgency using Min-Heap
+- **Dependencies Tracking**: Uses Graph DFS to show upstream/downstream dependencies
+- **Unique Identifiers**: Each request has RequestNumber (user-friendly) and GUID (internal)
+
+### Technical Implementation (20 marks):
+- **MVC Architecture**: Proper separation with Controllers, Views, Services
+- **Dependency Injection**: Services registered in Program.cs
+- **Seeded Data**: 15 sample requests with realistic Cape Town locations
+- **Efficient Operations**: All data structures provide better than O(n) performance for key operations
 
 ## References
 
