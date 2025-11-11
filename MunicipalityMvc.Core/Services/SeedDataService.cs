@@ -51,7 +51,7 @@ public class SeedDataService
 			Id = new Guid("00000000-0000-0000-0000-000000000003"),
 			RequestNumber = "SR-C3N8R5",
 			Title = "Pothole Repair",
-			Description = "Large pothole on main road",
+			Description = "Large pothole on main road - requires water pipe repair completion to avoid damage to new road surface",
 			Category = "Roads",
 			Location = "Park Road, Durban",
 			ReportedBy = "Michael Brown",
@@ -60,7 +60,8 @@ public class SeedDataService
 			Status = RequestStatus.InProgress,
 			AssignedTo = "Roads Department",
 			CreatedDate = baseDate.AddDays(5),
-			StatusUpdatedDate = baseDate.AddDays(6)
+			StatusUpdatedDate = baseDate.AddDays(6),
+			Dependencies = new List<Guid> { new Guid("00000000-0000-0000-0000-000000000001") }
 		};
 		requests.Add(req3);
 
@@ -87,7 +88,7 @@ public class SeedDataService
 			Id = new Guid("00000000-0000-0000-0000-000000000005"),
 			RequestNumber = "SR-E4P6T9",
 			Title = "Playground Repair",
-			Description = "Damaged playground equipment",
+			Description = "Damaged playground equipment - requires graffiti removal completion for safety inspection",
 			Category = "Parks",
 			Location = "Central Park, Bloemfontein",
 			ReportedBy = "David Lee",
@@ -96,7 +97,8 @@ public class SeedDataService
 			Status = RequestStatus.New,
 			AssignedTo = "",
 			CreatedDate = baseDate.AddDays(10),
-			StatusUpdatedDate = null
+			StatusUpdatedDate = null,
+			Dependencies = new List<Guid> { new Guid("00000000-0000-0000-0000-000000000007") }
 		};
 		requests.Add(req5);
 
@@ -178,7 +180,7 @@ public class SeedDataService
 			Id = new Guid("00000000-0000-0000-0000-000000000010"),
 			RequestNumber = "SR-K3L8N2",
 			Title = "Storm Drain Repair",
-			Description = "Blocked storm drain",
+			Description = "Blocked storm drain - requires pothole repair completion to access drainage system safely",
 			Category = "Sanitation",
 			Location = "River Road, East London",
 			ReportedBy = "Sophie Clark",
@@ -187,7 +189,8 @@ public class SeedDataService
 			Status = RequestStatus.Closed,
 			AssignedTo = "Drainage Team",
 			CreatedDate = baseDate.AddDays(5),
-			StatusUpdatedDate = baseDate.AddDays(18)
+			StatusUpdatedDate = baseDate.AddDays(18),
+			Dependencies = new List<Guid> { new Guid("00000000-0000-0000-0000-000000000003") }
 		};
 		requests.Add(req10);
 
@@ -214,7 +217,7 @@ public class SeedDataService
 			Id = new Guid("00000000-0000-0000-0000-000000000012"),
 			RequestNumber = "SR-M9P2Q5",
 			Title = "Water Meter Reading",
-			Description = "Faulty water meter needs inspection",
+			Description = "Faulty water meter needs inspection - requires water pipe burst repair completion to ensure accurate readings",
 			Category = "Utilities",
 			Location = "Residential Area, Witbank",
 			ReportedBy = "Jane Adams",
@@ -223,7 +226,8 @@ public class SeedDataService
 			Status = RequestStatus.Assigned,
 			AssignedTo = "Water Department",
 			CreatedDate = baseDate.AddDays(21),
-			StatusUpdatedDate = baseDate.AddDays(22)
+			StatusUpdatedDate = baseDate.AddDays(22),
+			Dependencies = new List<Guid> { new Guid("00000000-0000-0000-0000-000000000001") }
 		};
 		requests.Add(req12);
 
@@ -269,7 +273,7 @@ public class SeedDataService
 			Id = new Guid("00000000-0000-0000-0000-000000000015"),
 			RequestNumber = "SR-P5V9W2",
 			Title = "Library Air Conditioning",
-			Description = "Air conditioning system not working in library",
+			Description = "Air conditioning system not working in library - requires power outage resolution to test electrical systems",
 			Category = "Maintenance",
 			Location = "Public Library, Middelburg",
 			ReportedBy = "Carol Mitchell",
@@ -278,7 +282,8 @@ public class SeedDataService
 			Status = RequestStatus.New,
 			AssignedTo = "",
 			CreatedDate = baseDate.AddDays(27),
-			StatusUpdatedDate = null
+			StatusUpdatedDate = null,
+			Dependencies = new List<Guid> { new Guid("00000000-0000-0000-0000-000000000008") }
 		};
 		requests.Add(req15);
 

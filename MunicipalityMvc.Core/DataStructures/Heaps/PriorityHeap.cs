@@ -42,7 +42,46 @@ public class PriorityHeap
 
 	public List<ServiceRequest> GetAll()
 	{
-		return new List<ServiceRequest>(heap);
+		var result = new List<ServiceRequest>();
+		var tempHeap = new List<ServiceRequest>(heap);
+		
+		while (tempHeap.Count > 0)
+		{
+			var min = tempHeap[0];
+			result.Add(min);
+			
+			tempHeap[0] = tempHeap[tempHeap.Count - 1];
+			tempHeap.RemoveAt(tempHeap.Count - 1);
+			
+			if (tempHeap.Count > 0)
+				HeapifyDownTemp(tempHeap, 0);
+		}
+		
+		return result;
+	}
+	
+	private void HeapifyDownTemp(List<ServiceRequest> tempHeap, int index)
+	{
+		while (true)
+		{
+			int left = 2 * index + 1;
+			int right = 2 * index + 2;
+			int smallest = index;
+
+			if (left < tempHeap.Count && Compare(tempHeap[left], tempHeap[smallest]) < 0)
+				smallest = left;
+
+			if (right < tempHeap.Count && Compare(tempHeap[right], tempHeap[smallest]) < 0)
+				smallest = right;
+
+			if (smallest == index)
+				break;
+
+			var temp = tempHeap[index];
+			tempHeap[index] = tempHeap[smallest];
+			tempHeap[smallest] = temp;
+			index = smallest;
+		}
 	}
 
 	public int Size()
