@@ -22,11 +22,6 @@ public class ServiceStatusController : Controller
 		return View(requests);
 	}
 
-
-
-
-
-
 	[HttpGet]
 	public IActionResult Search(string requestNumber)
 	{

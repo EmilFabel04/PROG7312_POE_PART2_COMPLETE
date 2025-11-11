@@ -4,6 +4,9 @@ namespace MunicipalityMvc.Core.DataStructures.Heaps;
 
 public class PriorityHeap
 {
+	// Simple min heap for service requests
+	// I kept the rules straight forward: High=1, Medium=2, Low=3
+	// Ties go to the older request so older work doesn't get stuck
 	private List<ServiceRequest> heap;
 
 	public PriorityHeap()
@@ -11,12 +14,14 @@ public class PriorityHeap
 		heap = new List<ServiceRequest>();
 	}
 
+	// Add a new request to the heap
 	public void Add(ServiceRequest request)
 	{
 		heap.Add(request);
 		HeapifyUp(heap.Count - 1);
 	}
 
+	// Remove and return the highest priority item
 	public ServiceRequest GetNext()
 	{
 		if (heap.Count == 0)
@@ -32,6 +37,7 @@ public class PriorityHeap
 		return top;
 	}
 
+	// Look at the highest priority item without removing
 	public ServiceRequest Peek()
 	{
 		if (heap.Count == 0)
@@ -40,6 +46,7 @@ public class PriorityHeap
 		return heap[0];
 	}
 
+	// Return all items in true priority order, uses a temp heap
 	public List<ServiceRequest> GetAll()
 	{
 		var result = new List<ServiceRequest>();
@@ -60,6 +67,7 @@ public class PriorityHeap
 		return result;
 	}
 	
+	// Sift down on the temporary copy used by GetAll()
 	private void HeapifyDownTemp(List<ServiceRequest> tempHeap, int index)
 	{
 		while (true)
@@ -89,11 +97,13 @@ public class PriorityHeap
 		return heap.Count;
 	}
 
+	
 	public void Clear()
 	{
 		heap.Clear();
 	}
 
+	// Bubble up newly added item
 	private void HeapifyUp(int index)
 	{
 		while (index > 0)
@@ -108,6 +118,7 @@ public class PriorityHeap
 		}
 	}
 
+	// Sift down from the root
 	private void HeapifyDown(int index)
 	{
 		while (true)
@@ -130,6 +141,7 @@ public class PriorityHeap
 		}
 	}
 
+	//compare by priority then by created date
 	private int Compare(ServiceRequest a, ServiceRequest b)
 	{
 		int priorityCompare = ((int)a.Priority).CompareTo((int)b.Priority);

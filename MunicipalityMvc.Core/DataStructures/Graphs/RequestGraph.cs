@@ -2,17 +2,21 @@ using MunicipalityMvc.Core.Models;
 
 namespace MunicipalityMvc.Core.DataStructures.Graphs;
 
+// Small graph that stores "A depends on B" links between requests.
+// I use it to show what a request needs first and who is waiting on it.
 public class RequestGraph
 {
 	private Dictionary<Guid, ServiceRequest> requests;
 	private Dictionary<Guid, List<Guid>> adjacencyList;
 
+	// construct empty graph
 	public RequestGraph()
 	{
 		requests = new Dictionary<Guid, ServiceRequest>();
 		adjacencyList = new Dictionary<Guid, List<Guid>>();
 	}
 
+	// add a request node and its dependency edges
 	public void AddRequest(ServiceRequest request)
 	{
 		if (!requests.ContainsKey(request.Id))
@@ -30,11 +34,13 @@ public class RequestGraph
 		}
 	}
 
+	// get request by id, or null
 	public ServiceRequest GetRequest(Guid id)
 	{
 		return requests.ContainsKey(id) ? requests[id] : null;
 	}
 
+	// get direct dependencies, one hop
 	public List<ServiceRequest> GetDependencies(Guid requestId)
 	{
 		var deps = new List<ServiceRequest>();
@@ -51,6 +57,7 @@ public class RequestGraph
 		return deps;
 	}
 
+	// get all dependencies using DFS
 	public List<ServiceRequest> GetAllDependenciesDFS(Guid requestId)
 	{
 		var result = new List<ServiceRequest>();
@@ -59,6 +66,7 @@ public class RequestGraph
 		return result;
 	}
 
+	// internal DFS helper
 	private void DFS(Guid requestId, HashSet<Guid> visited, List<ServiceRequest> result)
 	{
 		if (visited.Contains(requestId) || !adjacencyList.ContainsKey(requestId))
@@ -75,7 +83,8 @@ public class RequestGraph
 			}
 		}
 	}
-
+/*
+	// breadth first alternative, not used by UI right now
 	public List<ServiceRequest> GetAllDependenciesBFS(Guid requestId)
 	{
 		var result = new List<ServiceRequest>();
@@ -107,7 +116,8 @@ public class RequestGraph
 		}
 		return result;
 	}
-
+*/
+	// find requests that depend on the given id
 	public List<ServiceRequest> GetRequestsDependingOn(Guid requestId)
 	{
 		var dependents = new List<ServiceRequest>();
@@ -122,16 +132,19 @@ public class RequestGraph
 		return dependents;
 	}
 
+	// count of nodes in graph
 	public int GetRequestCount()
 	{
 		return requests.Count;
 	}
 
+	// all nodes as a list
 	public List<ServiceRequest> GetAllRequests()
 	{
 		return requests.Values.ToList();
 	}
 
+	// clear entire graph
 	public void Clear()
 	{
 		requests.Clear();

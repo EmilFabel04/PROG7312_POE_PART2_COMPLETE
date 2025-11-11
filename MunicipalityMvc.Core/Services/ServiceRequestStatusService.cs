@@ -11,6 +11,7 @@ public class ServiceRequestStatusService : IServiceRequestStatusService
 	private readonly PriorityHeap _priorityHeap;
 	private readonly RequestGraph _graph;
 
+	// construct and wire up the structures
 	public ServiceRequestStatusService()
 	{
 		_searchTree = new SearchTree();
@@ -18,6 +19,7 @@ public class ServiceRequestStatusService : IServiceRequestStatusService
 		_graph = new RequestGraph();
 	}
 
+	// load/refresh seed requests into all structures
 	public void LoadRequests(List<ServiceRequest> requests)
 	{
 		_searchTree.Clear();
@@ -32,26 +34,31 @@ public class ServiceRequestStatusService : IServiceRequestStatusService
 		}
 	}
 
+	// lookup by request number (BST)
 	public ServiceRequest FindByRequestNumber(string requestNumber)
 	{
 		return _searchTree.Find(requestNumber);
 	}
 
+	// all requests (sorted by key)
 	public List<ServiceRequest> GetAllRequests()
 	{
 		return _searchTree.GetAll();
 	}
 
+	// requests ordered by priority (heap)
 	public List<ServiceRequest> GetPriorityRequests()
 	{
 		return _priorityHeap.GetAll();
 	}
 
+	// upstream dependencies for a request (graph)
 	public List<ServiceRequest> GetDependencies(Guid requestId)
 	{
 		return _graph.GetAllDependenciesDFS(requestId);
 	}
 
+	// who depends on this request (graph)
 	public List<ServiceRequest> GetRequestsDependingOn(Guid requestId)
 	{
 		return _graph.GetRequestsDependingOn(requestId);
