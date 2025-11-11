@@ -49,7 +49,15 @@ public class ServiceStatusController : Controller
 	[HttpGet]
 	public IActionResult Dependencies(Guid id)
 	{
-		var request = _statusService.GetAllRequests().FirstOrDefault(r => r.Id == id);
+		ServiceRequest request = null;
+		foreach (var r in _statusService.GetAllRequests())
+		{
+			if (r.Id == id)
+			{
+				request = r;
+				break;
+			}
+		}
 		
 		if (request == null)
 		{
