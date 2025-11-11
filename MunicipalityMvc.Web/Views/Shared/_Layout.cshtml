@@ -16,7 +16,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">Municipal Services</a>
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-semibold" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="Logo" width="28" height="28" class="rounded-1" style="object-fit: cover;" />
+                    <span>Municipal Services</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -32,8 +35,14 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Events" asp-action="Index">Events</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="ServiceStatus" asp-action="Index">Service Status</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="statusDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Service Status
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                                <li><a class="dropdown-item" asp-area="" asp-controller="ServiceStatus" asp-action="Index">All Requests</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="ServiceStatus" asp-action="Priority">Priority Queue</a></li>
+                            </ul>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-white-50" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
