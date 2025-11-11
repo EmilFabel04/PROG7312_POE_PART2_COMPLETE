@@ -117,6 +117,16 @@ The app will start with sample service request data ready to use.
 - Keeps requests in alphabetical order automatically
 - Good for the search feature and sorted lists
 
+**Code Implementation**:
+![Binary Search Tree Class Structure](docs/code_bst_class.png)
+TreeNode class and SearchTree class definition (lines 1-30)
+
+![BST Add Method](docs/code_bst_add.png)
+Add method and AddNode recursive implementation (lines 31-50)
+
+![BST Find Method](docs/code_bst_find.png)
+Find method and FindNode recursive search (lines 51-70)
+
 ### 2. Min-Heap (Priority Queue)
 **File**: `PriorityHeap.cs`
 
@@ -141,6 +151,16 @@ The app will start with sample service request data ready to use.
 4. Pothole Repair (Medium priority)
 5. Garbage Collection (Medium priority)
 ```
+
+**Code Implementation**:
+![Min-Heap Class Structure](docs/code_heap_class.png)
+PriorityHeap class definition and constructor (lines 1-25)
+
+![Heap Add and GetNext Methods](docs/code_heap_add_getnext.png)
+Add method and GetNext method implementation (lines 26-55)
+
+![Heap Heapify Methods](docs/code_heap_heapify.png)
+HeapifyUp and HeapifyDown bubble operations (lines 80-120)
 
 ### 3. Graph (Dependencies)
 **File**: `RequestGraph.cs`
@@ -171,6 +191,19 @@ So the order is: Safety Check -> Power Fix -> Traffic Light
 - **DFS**: Follows one chain all the way to the end first
 - **BFS**: Looks at all direct connections first, then goes deeper
 - We use DFS to show the complete chain of what needs to be done
+
+**Code Implementation**:
+![Graph Class Structure](docs/code_graph_class.png)
+RequestGraph class definition and constructor (lines 1-25)
+
+![Graph AddRequest Method](docs/code_graph_add.png)
+AddRequest method for building adjacency list (lines 26-45)
+
+![Graph DFS Implementation](docs/code_graph_dfs.png)
+GetAllDependenciesDFS and DFS helper method (lines 60-85)
+
+![Graph BFS Implementation](docs/code_graph_bfs.png)
+GetAllDependenciesBFS breadth-first search (lines 90-115)
 
 ## Screenshots
 
