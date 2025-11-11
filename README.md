@@ -119,13 +119,13 @@ The app will start with sample service request data ready to use.
 
 **Code Implementation**:
 ![Binary Search Tree Class Structure](docs/code_bst_class.png)
-TreeNode class and SearchTree class definition (lines 1-30)
+TreeNode class and SearchTree class definition 
 
 ![BST Add Method](docs/code_bst_add.png)
-Add method and AddNode recursive implementation (lines 31-50)
+Add method and AddNode recursive implementation 
 
 ![BST Find Method](docs/code_bst_find.png)
-Find method and FindNode recursive search (lines 51-70)
+Find method and FindNode recursive search 
 
 ### 2. Min-Heap (Priority Queue)
 **File**: `PriorityHeap.cs`
@@ -154,13 +154,13 @@ Find method and FindNode recursive search (lines 51-70)
 
 **Code Implementation**:
 ![Min-Heap Class Structure](docs/code_heap_class.png)
-PriorityHeap class definition and constructor (lines 1-25)
+PriorityHeap class definition and constructor
 
 ![Heap Add and GetNext Methods](docs/code_heap_add_getnext.png)
-Add method and GetNext method implementation (lines 26-55)
+Add method and GetNext method implementation 
 
 ![Heap Heapify Methods](docs/code_heap_heapify.png)
-HeapifyUp and HeapifyDown bubble operations (lines 80-120)
+HeapifyUp and HeapifyDown bubble operations 
 
 ### 3. Graph (Dependencies)
 **File**: `RequestGraph.cs`
@@ -194,16 +194,16 @@ So the order is: Safety Check -> Power Fix -> Traffic Light
 
 **Code Implementation**:
 ![Graph Class Structure](docs/code_graph_class.png)
-RequestGraph class definition and constructor (lines 1-25)
+RequestGraph class definition and constructor 
 
 ![Graph AddRequest Method](docs/code_graph_add.png)
-AddRequest method for building adjacency list (lines 26-45)
+AddRequest method for building adjacency list 
 
 ![Graph DFS Implementation](docs/code_graph_dfs.png)
-GetAllDependenciesDFS and DFS helper method (lines 60-85)
+GetAllDependenciesDFS and DFS helper method 
 
 ![Graph BFS Implementation](docs/code_graph_bfs.png)
-GetAllDependenciesBFS breadth-first search (lines 90-115)
+GetAllDependenciesBFS breadth-first search 
 
 ## Screenshots
 
