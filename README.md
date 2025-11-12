@@ -6,6 +6,9 @@
 ## GITHUB REPO LINK:
 https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
 
+## YOUTUBE VIDEO LINK:
+https://youtu.be/dzOMtclS5Cw
+
 ## Overview
 
 This Municipal Services app is an ASP.NET Core MVC application that helps citizens interact with municipal services. Part 3 focuses on the Service Request Status System, which implements advanced data structures to efficiently manage, search, and display service requests with their dependencies and priorities.
@@ -308,6 +311,8 @@ Some requests depend on others:
 
 ## References
 
+### Part 1 & 2 References
+
 ### Microsoft Docs
 - ASP.NET Core MVC: https://learn.microsoft.com/en-us/aspnet/core/mvc/overview
 - Stack<T>: https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.stack-1
@@ -339,3 +344,51 @@ Some requests depend on others:
 - OpenAI ChatGPT: helped with debugging and understanding data structures -> https://openai.com
 - Prettier: https://prettier.io/ for code formatting
 - Youtube : https://youtube.com/ for video tutorials and explenations
+
+### Part 3 References
+
+#### Binary Search Trees (BST)
+- GeeksforGeeks BST Introduction: https://www.geeksforgeeks.org/binary-search-tree-data-structure/
+- GeeksforGeeks BST Operations: https://www.geeksforgeeks.org/binary-search-tree-set-1-search-and-insertion/
+- Programiz BST Tutorial: https://www.programiz.com/dsa/binary-search-tree
+- TutorialsPoint BST in C#: https://www.tutorialspoint.com/data_structures_algorithms/binary_search_tree.htm
+- CodeProject BST Implementation: https://www.codeproject.com/Articles/1158559/Binary-Search-Tree-Implementation-in-Csharp
+- YouTube - Binary Search Tree Explained: https://www.youtube.com/results?search_query=binary+search+tree+tutorial+c%23
+
+#### Min-Heap and Priority Queues
+- GeeksforGeeks Heap Data Structure: https://www.geeksforgeeks.org/heap-data-structure/
+- GeeksforGeeks Min Heap Implementation: https://www.geeksforgeeks.org/min-heap-in-java/
+- Programiz Heap Sort Tutorial: https://www.programiz.com/dsa/heap-sort
+- Microsoft Priority Queue Documentation: https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.priorityqueue-2
+- Stack Overflow Priority Queue C#: https://stackoverflow.com/questions/42519/how-do-you-implement-a-priority-queue-in-c
+- YouTube - Min Heap Explained: https://www.youtube.com/results?search_query=min+heap+data+structure+tutorial
+
+#### Graph Data Structure and Traversal
+- GeeksforGeeks Graph Introduction: https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/
+- GeeksforGeeks DFS Algorithm: https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/
+- GeeksforGeeks BFS Algorithm: https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/
+- Programiz Graph Traversal: https://www.programiz.com/dsa/graph-dfs
+- TutorialsPoint Graph in C#: https://www.tutorialspoint.com/data_structures_algorithms/graph_data_structure.htm
+- CodeProject Graph Implementation: https://www.codeproject.com/Articles/32212/Introduction-to-Graph-with-Breadth-First-Search-an
+- YouTube - Graph DFS/BFS: https://www.youtube.com/results?search_query=graph+dfs+bfs+algorithm+tutorial
+
+#### Algorithm Analysis and Big O Notation
+- GeeksforGeeks Time Complexity: https://www.geeksforgeeks.org/understanding-time-complexity-simple-examples/
+- Khan Academy Big O Notation: https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-o-notation
+- Programiz Algorithm Complexity: https://www.programiz.com/dsa/asymptotic-notations
+- Stack Overflow Big O Explanation: https://stackoverflow.com/questions/487258/what-is-a-plain-english-explanation-of-big-o-notation
+
+#### C# Resources
+- Microsoft C# Collections: https://learn.microsoft.com/en-us/dotnet/standard/collections/
+- C# Corner Data Structures: https://www.c-sharpcorner.com/article/data-structure-and-algorithms-using-c-sharp/
+- DotNetTricks C# Data Structures: https://www.dotnettricks.com/learn/datastructures
+- TutorialsTeacher C# Collections: https://www.tutorialsteacher.com/csharp/csharp-collection
+
+#### Other Resources
+- MDN Web Docs - Algorithm Basics: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Algorithms
+- OpenAI ChatGPT: helped with understanding tree traversal algorithms and debugging heap operations -> https://openai.com
+- Prettier: https://prettier.io/ for consistent code formatting across all data structure files
+- LeetCode: https://leetcode.com/ for practicing BST, heap, and graph algorithm problems
+- YouTube: https://youtube.com/ for visual explanations of how heaps maintain their properties
+
+
