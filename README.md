@@ -4,7 +4,7 @@
 **Year**: 2025
 
 ## GITHUB REPO LINK:
-https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
+https://github.com/EmilFabel04/PROG7312_POE_PART3
 
 ## YOUTUBE VIDEO LINK:
 https://youtu.be/dzOMtclS5Cw
@@ -39,7 +39,7 @@ The system uses three data structures:
 ## How to Compile and Run
 
 ### Option 1: Download ZIP from GitHub
-1. Go to: https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE
+1. Go to: https://github.com/EmilFabel04/PROG7312_POE_PART3
 2. Click the green **Code** button
 3. Select **Download ZIP**
 4. Extract the ZIP file to your computer
@@ -47,8 +47,8 @@ The system uses three data structures:
 
 ### Option 2: Clone from GitHub
 ```bash
-git clone https://github.com/EmilFabel04/PROG7312_POE_PART2_COMPLETE.git
-cd PROG7312_POE_PART2_COMPLETE
+git clone https://github.com/EmilFabel04/PROG7312_POE_PART3.git
+cd PROG7312_POE_PART3
 ```
 
 ### Steps to Run:
@@ -67,11 +67,6 @@ dotnet build
 ```bash
 dotnet run --project MunicipalityMvc.Web
 ```
-
-#### 4. Open in Browser
-Go to one of these addresses:
-- **HTTPS**: `https://localhost:7001`
-- **HTTP**: `http://localhost:5000`
 
 The app will start with sample service request data ready to use.
 
@@ -386,7 +381,7 @@ Some requests depend on others:
 
 #### Other Resources
 - MDN Web Docs - Algorithm Basics: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Algorithms
-- OpenAI ChatGPT: helped with understanding tree traversal algorithms and debugging heap operations -> https://openai.com
+- OpenAI ChatGPT: helped with understanding algorithms and debugging -> https://openai.com
 - Prettier: https://prettier.io/ for consistent code formatting across all data structure files
 - LeetCode: https://leetcode.com/ for practicing BST, heap, and graph algorithm problems
 - YouTube: https://youtube.com/ for visual explanations of how heaps maintain their properties
